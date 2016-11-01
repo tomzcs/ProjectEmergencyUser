@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:padding="10dp"
+            android:src="@drawable/logo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#20000000"
+            android:orientation="vertical"
+            android:padding="40dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="อีเมล์ :"
+                style="@style/fragment_main_style" />
+
+
+            <EditText
+                android:id="@+id/editTextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                style="@style/fragment_main_style"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="รหัสผ่าน :"
+                style="@style/fragment_main_style" />
+
+            <EditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                style="@style/fragment_main_style" />
+
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                style="@style/fragment_main_style"
+                android:background="#000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ลงชื่อเข้าใช้" />
+
+            <Button
+                android:id="@+id/btnRegister"
+                android:background="#00000000"
+                android:layout_gravity="center"
+                android:text="ลงทะเบียนใหม่"
+                android:textSize="16sp"
+                android:layout_marginTop="10dp"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
