@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //
 
         tvName = (TextView) findViewById(R.id.tvName);
-        tvName = (TextView) findViewById(R.id.tvName);
         tvEmail = (TextView) findViewById(R.id.tvEmail);
         tvTel = (TextView) findViewById(R.id.tvTel);
         tvName.setText("ชื่อ :"+  dao.getUser().get(0).getName());
