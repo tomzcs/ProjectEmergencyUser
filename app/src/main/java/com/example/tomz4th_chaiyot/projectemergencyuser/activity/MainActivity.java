@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.e("error",null);
         Fabric.with(this, new Crashlytics());
         user = new userManager();
         dao = user.getDao();
@@ -93,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //
 
+        tvName = (TextView) findViewById(R.id.tvName);
         tvName = (TextView) findViewById(R.id.tvName);
         tvEmail = (TextView) findViewById(R.id.tvEmail);
         tvTel = (TextView) findViewById(R.id.tvTel);
