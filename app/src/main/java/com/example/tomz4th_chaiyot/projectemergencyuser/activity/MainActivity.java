@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnLogout.setOnClickListener(this);
 
         //
-
+        Log.e("asdad","sadsad");
         tvName = (TextView) findViewById(R.id.tvName);
         tvName = (TextView) findViewById(R.id.tvName);
         tvEmail = (TextView) findViewById(R.id.tvEmail);
