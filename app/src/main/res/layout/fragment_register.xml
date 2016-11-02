@@ -20,32 +20,32 @@
 
     <LinearLayout
 
-        android:background="#20000000"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#20000000"
+        android:orientation="vertical"
         android:padding="20dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <TextView
+                style="@style/fragment_main_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ชื่อ-สกุล :"
-                style="@style/fragment_main_style" />
+                android:text="ชื่อ-สกุล :" />
 
             <EditText
                 android:id="@+id/editTextName"
-                android:inputType="text"
+                style="@style/fragment_main_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                style="@style/fragment_main_style" />
+                android:inputType="text" />
         </LinearLayout>
-
 
 
         <LinearLayout
@@ -54,20 +54,20 @@
             android:orientation="horizontal">
 
             <TextView
+                style="@style/fragment_main_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="เบอร์โทรศัพท์ :"
-                style="@style/fragment_main_style" />
+                android:text="เบอร์โทรศัพท์ :" />
 
             <EditText
                 android:id="@+id/editTextTel"
-                android:maxLength="10"
-                android:inputType="number"
+                style="@style/fragment_main_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                style="@style/fragment_main_style" />
+                android:inputType="number"
+                android:maxLength="10" />
         </LinearLayout>
 
         <LinearLayout
@@ -76,19 +76,19 @@
             android:orientation="horizontal">
 
             <TextView
+                style="@style/fragment_main_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="อีเมล์ :"
-                style="@style/fragment_main_style" />
+                android:text="อีเมล์ :" />
 
             <EditText
                 android:id="@+id/editTextEmail"
-                android:inputType="text"
+                style="@style/fragment_main_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                style="@style/fragment_main_style" />
+                android:inputType="text" />
         </LinearLayout>
 
         <LinearLayout
@@ -97,30 +97,30 @@
             android:orientation="horizontal">
 
             <TextView
+                style="@style/fragment_main_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="รหัสผ่าน :"
-                style="@style/fragment_main_style" />
+                android:text="รหัสผ่าน :" />
 
             <EditText
                 android:id="@+id/editTextPassword"
+                style="@style/fragment_main_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:inputType="textPassword"
-                style="@style/fragment_main_style" />
+                android:inputType="textPassword" />
         </LinearLayout>
 
         <Button
             android:id="@+id/btnRegister"
-            android:layout_marginTop="20dp"
-            android:textStyle="bold"
             style="@style/fragment_main_style"
-            android:background="#000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ลงทะเบียน" />
+            android:layout_marginTop="20dp"
+            android:background="@drawable/selector_btn"
+            android:text="ลงทะเบียน"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
