@@ -14,15 +14,15 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.R;
  * Created by nuuneoi on 11/16/2014.
  */
 @SuppressWarnings("unused")
-public class ServiceListItem extends Fragment {
+public class ServiceListItemFragment extends Fragment {
 
-    public ServiceListItem() {
+    public ServiceListItemFragment() {
         super();
     }
 
     @SuppressWarnings("unused")
-    public static ServiceListItem newInstance() {
-        ServiceListItem fragment = new ServiceListItem();
+    public static ServiceListItemFragment newInstance() {
+        ServiceListItemFragment fragment = new ServiceListItemFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
