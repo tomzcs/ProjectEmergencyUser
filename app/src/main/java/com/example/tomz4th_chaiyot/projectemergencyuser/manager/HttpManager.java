@@ -31,7 +31,7 @@ public class HttpManager {
 
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.4.11.93:8181/db_connection/v1/")
+                .baseUrl("http://10.6.7.98:8181/db_connection/v1/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

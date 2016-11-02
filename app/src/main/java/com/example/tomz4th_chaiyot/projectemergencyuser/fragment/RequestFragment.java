@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
@@ -38,6 +39,8 @@ public class RequestFragment extends Fragment implements
     private double latitude = 0;
     private double longitude = 0;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
+    EditText editTextRequestDetail;
+    EditText editTextRequestDetailCar;
 
     public RequestFragment() {
         super();
@@ -86,6 +89,10 @@ public class RequestFragment extends Fragment implements
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.mapContainer);
         mapFragment.getMapAsync(this);
+
+        editTextRequestDetail = (EditText) rootView.findViewById(R.id.editTextRequestDetail);
+        editTextRequestDetailCar = (EditText) rootView.findViewById(R.id.editTextRequestDetailCar);
+
     }
 
     @Override
@@ -189,6 +196,8 @@ public class RequestFragment extends Fragment implements
         mMap.clear();
         latitude = location.getLatitude();
         longitude = location.getLongitude();
+        editTextRequestDetail.setText(latitude+"");
+        editTextRequestDetailCar.setText(longitude+"");
 
         LatLng latlng = new LatLng(latitude, longitude);
         MarkerOptions markFrom = new MarkerOptions().position(new LatLng(latitude, longitude)).title("ตำแหน่งปัจจุบัน");

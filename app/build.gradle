@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 24
@@ -18,11 +19,7 @@ android {
         }
     }
 }
-apply plugin: 'io.fabric'
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')

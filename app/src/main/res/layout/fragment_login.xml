@@ -25,52 +25,53 @@
 
 
             <TextView
+                style="@style/fragment_main_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="อีเมล์ :"
-                style="@style/fragment_main_style" />
+                android:text="อีเมล์ :" />
 
 
             <EditText
                 android:id="@+id/editTextEmail"
+                style="@style/fragment_main_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                style="@style/fragment_main_style"/>
+                android:inputType="text" />
 
             <TextView
+                style="@style/fragment_main_style"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="รหัสผ่าน :"
-                style="@style/fragment_main_style" />
+                android:text="รหัสผ่าน :" />
 
             <EditText
                 android:id="@+id/editTextPassword"
+                style="@style/fragment_main_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                style="@style/fragment_main_style" />
+                android:inputType="textPassword" />
 
             <Button
                 android:id="@+id/btnLogin"
-                android:layout_marginTop="10dp"
-                android:textStyle="bold"
                 style="@style/fragment_main_style"
-                android:background="#000"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ลงชื่อเข้าใช้" />
+                android:layout_marginTop="10dp"
+                android:background="@drawable/selector_btn"
+                android:text="ลงชื่อเข้าใช้"
+                android:textStyle="bold" />
 
             <Button
+
                 android:id="@+id/btnRegister"
-                android:background="#00000000"
-                android:layout_gravity="center"
-                android:text="ลงทะเบียนใหม่"
-                android:textSize="16sp"
-                android:layout_marginTop="10dp"
-                android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:background="#00000000"
+                android:text="ลงทะเบียนใหม่"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
 
         </LinearLayout>
 

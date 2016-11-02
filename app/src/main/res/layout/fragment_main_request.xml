@@ -5,6 +5,11 @@
     android:orientation="vertical">
 
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,10 +20,10 @@
         <fragment
             android:id="@+id/mapContainer"
             android:name="com.google.android.gms.maps.SupportMapFragment"
+            class="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginBottom="20dp"
-            class="com.google.android.gms.maps.SupportMapFragment"/>
+            android:layout_marginBottom="20dp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -26,13 +31,28 @@
             android:text="รายละเอียดการร้องขอ" />
 
         <EditText
+            android:id="@+id/editTextRequestDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ลักษณะของรถ" />
+
+        <EditText
+            android:id="@+id/editTextRequestDetailCar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Button
+            android:background="@drawable/selector_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
             android:text="ยืนยันการร้องขอ" />
 
     </LinearLayout>
+
+    </ScrollView>
 </RelativeLayout>
