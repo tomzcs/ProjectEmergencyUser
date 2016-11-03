@@ -15,9 +15,6 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.CommentListAdapt
 public class ServiceProfileFragment extends Fragment {
 
 
-    ListView listView;
-    CommentListAdapter listAdapter;
-
     public ServiceProfileFragment() {
         super();
     }
@@ -54,8 +51,6 @@ public class ServiceProfileFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
     }
