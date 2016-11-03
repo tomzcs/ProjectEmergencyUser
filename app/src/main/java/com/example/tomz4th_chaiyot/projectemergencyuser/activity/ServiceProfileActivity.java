@@ -21,7 +21,7 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceProfileF
 import static com.example.tomz4th_chaiyot.projectemergencyuser.R.id.activity_main;
 import static com.example.tomz4th_chaiyot.projectemergencyuser.R.id.tabLayout;
 
-public class ServiceProfileActivity extends AppCompatActivity {
+public class ServiceProfileActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener{
 
     Toolbar toolbar;
     private CollapsingToolbarLayout collapsingToolbarLayout;
@@ -48,9 +48,32 @@ public class ServiceProfileActivity extends AppCompatActivity {
         //tabLayout
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
+        
+ NestedScrollView nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScrollView);
+        nestedScrollView.setFillViewport(true);
+        
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+        
+         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+        appBarLayout.addOnOffsetChangedListener(this);
+    }
+ @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+
+        if (scrollRange == -1) {
+            scrollRange = appBarLayout.getTotalScrollRange();
+        }
+        if (scrollRange + verticalOffset == 0) {
+            collapsingToolbarLayout.setTitle("ข้อมูลผู้ให้บริการ");
+            isShow = true;
+        } else if (isShow) {
+            collapsingToolbarLayout.setTitle(" ");
+            isShow = false;
+        }
+
 
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home){
