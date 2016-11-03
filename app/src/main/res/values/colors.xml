@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="AE3600">#64B5F6</color>
     <color name="D65317">#2196F3</color>
+    <color name="Overlay_color">#80000000</color>
 </resources>

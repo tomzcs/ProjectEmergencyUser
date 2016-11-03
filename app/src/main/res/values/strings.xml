@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProjectEmergencyUser</string>
+    <string name="app_name">บริการช่วยรถยามฉุกเฉิน</string>
     <string name="open_drawer">Open Menu</string>
     <string name="close_drawer">Close Menu</string>
 </resources>

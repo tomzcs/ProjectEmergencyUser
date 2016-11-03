@@ -1,34 +1,27 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
-import com.example.tomz4th_chaiyot.projectemergencyuser.activity.ServiceProfileActivity;
-import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.ServiceListAdapter;
 
-/**
- * Created by nuuneoi on 11/16/2014.
- */
-public class ServiceListFragment extends Fragment implements AdapterView.OnItemClickListener {
+@SuppressWarnings("unused")
+public class ServiceProfileFragment extends Fragment {
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
-    ListView listView;
-    ServiceListAdapter listAdapter;
-
-    public ServiceListFragment() {
+    public ServiceProfileFragment() {
         super();
     }
 
-    public static ServiceListFragment newInstance() {
-        ServiceListFragment fragment = new ServiceListFragment();
+    @SuppressWarnings("unused")
+    public static ServiceProfileFragment newInstance() {
+        ServiceProfileFragment fragment = new ServiceProfileFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -43,13 +36,10 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
             onRestoreInstanceState(savedInstanceState);
     }
 
-    private void onRestoreInstanceState(Bundle savedInstanceState) {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main_service_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_service_profile, container, false);
         initInstances(rootView, savedInstanceState);
         return rootView;
     }
@@ -58,12 +48,13 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
         // Init Fragment level's variable(s) here
     }
 
+    @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-        listView = (ListView) rootView.findViewById(R.id.listView);
-        listAdapter = new ServiceListAdapter();
-        listView.setAdapter(listAdapter);
-        listView.setOnItemClickListener(this);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("ข้อมูลร้านให้บริการ");
+
 
     }
 
@@ -89,16 +80,9 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
     /*
      * Restore Instance State Here
      */
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            // Restore Instance State here
-        }
+    @SuppressWarnings("UnusedParameters")
+    private void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Restore Instance State here
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        startActivity(new Intent(getContext(), ServiceProfileActivity.class));
-    }
 }
