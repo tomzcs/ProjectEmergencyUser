@@ -10,6 +10,9 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.inthecheesefactory.thecheeselibrary.view.BaseCustomViewGroup;
 import com.inthecheesefactory.thecheeselibrary.view.state.BundleSavedState;
 
+/**
+ * Created by nuuneoi on 11/16/2014.
+ */
 public class ServiceListItem extends BaseCustomViewGroup {
 
     public ServiceListItem(Context context) {
@@ -84,4 +87,15 @@ public class ServiceListItem extends BaseCustomViewGroup {
         // Restore State from bundle here
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = width * 2/3;
+        int newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                height,
+                MeasureSpec.EXACTLY
+        );
+        super.onMeasure(widthMeasureSpec, newHeightMeasureSpec);
+        setMeasuredDimension(width,height);
+    }
 }

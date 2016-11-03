@@ -1,64 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#000" />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="@drawable/bg" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="6"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/logoadmin" />
+        <FrameLayout
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:baselineAlignBottom="true"
+                android:padding="16dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/logoadmin" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
+            android:background="#80000000"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <TextView
-                android:textSize="16sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="ชื่อร้าน :" />
+                style="@style/service_list_item"
+                android:text="ชื่อร้าน : ช.ช่าง" />
 
             <TextView
-                android:textSize="16sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="รายละเอียดร้าน :" />
+                style="@style/service_list_item"
+                android:text="รายละเอียดร้าน : บริการซ่อมรถนอกสถานที่ 24 ชม. ทุกวัน" />
 
             <TextView
-                android:textSize="16sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="ระยะห่างจากคุณ :" />
-
-
-
+                style="@style/service_list_item"
+                android:text="ระยะห่างจากคุณ : 500 เมตร." />
         </LinearLayout>
 
 
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="#000" />
-
-</LinearLayout>
+</RelativeLayout>

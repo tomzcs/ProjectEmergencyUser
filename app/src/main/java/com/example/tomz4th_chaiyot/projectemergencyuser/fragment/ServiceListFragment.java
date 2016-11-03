@@ -6,13 +6,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
+import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.ServiceListAdapter;
 
 /**
  * Created by nuuneoi on 11/16/2014.
  */
 public class ServiceListFragment extends Fragment {
+
+    ListView listView;
+    ServiceListAdapter listAdapter;
 
     public ServiceListFragment() {
         super();
@@ -51,6 +56,10 @@ public class ServiceListFragment extends Fragment {
 
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
+        listView = (ListView) rootView.findViewById(R.id.listView);
+        listAdapter = new ServiceListAdapter();
+        listView.setAdapter(listAdapter);
+
     }
 
     @Override
