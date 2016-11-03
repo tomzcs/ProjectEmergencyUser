@@ -3,20 +3,15 @@ package com.example.tomz4th_chaiyot.projectemergencyuser.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
-import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.CommentListAdapter;
+
 
 @SuppressWarnings("unused")
 public class ServiceProfileFragment extends Fragment {
 
-
-    ListView listView;
-    CommentListAdapter listAdapter;
 
     public ServiceProfileFragment() {
         super();
@@ -54,8 +49,6 @@ public class ServiceProfileFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
     }
