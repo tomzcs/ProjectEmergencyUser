@@ -3,28 +3,31 @@ package com.example.tomz4th_chaiyot.projectemergencyuser.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.CommentListAdapter;
 
+
+/**
+ * Created by nuuneoi on 11/16/2014.
+ */
 @SuppressWarnings("unused")
-public class ServiceProfileFragment extends Fragment {
+public class ServiceCommentFragment extends Fragment {
 
+    private ListView listView;
+    private CommentListAdapter listAdapter;
 
-    ListView listView;
-    CommentListAdapter listAdapter;
-
-    public ServiceProfileFragment() {
+    public ServiceCommentFragment() {
         super();
     }
 
     @SuppressWarnings("unused")
-    public static ServiceProfileFragment newInstance() {
-        ServiceProfileFragment fragment = new ServiceProfileFragment();
+    public static ServiceCommentFragment newInstance() {
+        ServiceCommentFragment fragment = new ServiceCommentFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -42,7 +45,7 @@ public class ServiceProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_service_profile, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_service_comment, container, false);
         initInstances(rootView, savedInstanceState);
         return rootView;
     }
@@ -54,10 +57,10 @@ public class ServiceProfileFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
+        listView = (ListView) rootView.findViewById(R.id.listView);
+        listAdapter = new CommentListAdapter();
+        listView.setAdapter(listAdapter);
+        listAdapter.notifyDataSetChanged();
     }
 
     @Override
