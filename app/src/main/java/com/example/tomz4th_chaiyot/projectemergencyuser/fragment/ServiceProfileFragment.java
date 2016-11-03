@@ -2,18 +2,21 @@ package com.example.tomz4th_chaiyot.projectemergencyuser.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.ListView;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
+import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.CommentListAdapter;
 
 @SuppressWarnings("unused")
 public class ServiceProfileFragment extends Fragment {
-    CollapsingToolbarLayout collapsingToolbarLayout;
+
+
+    ListView listView;
+    CommentListAdapter listAdapter;
 
     public ServiceProfileFragment() {
         super();
@@ -53,8 +56,9 @@ public class ServiceProfileFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("ข้อมูลร้านให้บริการ");
-
+        listView = (ListView) rootView.findViewById(R.id.listView);
+        listAdapter = new CommentListAdapter();
+        listView.setAdapter(listAdapter);
 
     }
 

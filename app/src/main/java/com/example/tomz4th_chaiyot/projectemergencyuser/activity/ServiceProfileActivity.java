@@ -1,12 +1,10 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceProfileFragment;
 
@@ -34,7 +32,7 @@ public class ServiceProfileActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
-        collapsingToolbarLayout.setTitle("Design Library");
+        collapsingToolbarLayout.setTitle("ชื่อร้าน");
     }
 
     @Override
