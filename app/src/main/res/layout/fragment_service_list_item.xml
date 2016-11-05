@@ -15,6 +15,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
+
         <FrameLayout
             android:padding="10dp"
             android:layout_width="match_parent"
@@ -49,8 +50,12 @@
                 android:text="ระยะห่างจากคุณ : 500 เมตร." />
         </LinearLayout>
 
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="#9E9E9E" />
     </LinearLayout>
+
     <View
         android:background="@drawable/selector_overlay"
         android:layout_width="match_parent"
