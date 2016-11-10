@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,24 +15,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.crashlytics.android.Crashlytics;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.RequestFragment;
-import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceCommentFragment;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceListFragment;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.userManager;
 
+
 import io.fabric.sdk.android.Fabric;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private Toolbar toolbar;
     private ViewPager viewPager;
@@ -40,11 +38,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ActionBarDrawerToggle actionBarDrawerToggle;
     private userManager user;
     private UsersCollectionDao dao;
-    Button btnLogout;
     private TextView tvName;
     private TextView tvEmail;
     private TextView tvTel;
     private boolean doubleBackToExitPressedOnce;
+    private NavigationView navigationView;
 
 
     @Override
@@ -87,14 +85,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //Button
-        btnLogout = (Button) findViewById(R.id.btnLogout);
-        btnLogout.setOnClickListener(this);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
-        //
-        tvName = (TextView) findViewById(R.id.tvName);
-        tvEmail = (TextView) findViewById(R.id.tvEmail);
-        tvTel = (TextView) findViewById(R.id.tvTel);
+        View headerLayout = navigationView.getHeaderView(0);
+
+        tvName = (TextView) headerLayout.findViewById(R.id.tvName);
+        tvEmail = (TextView) headerLayout.findViewById(R.id.tvEmail);
+        tvTel = (TextView) headerLayout.findViewById(R.id.tvTel);
         tvName.setText("ชื่อ :"+  dao.getUser().get(0).getName());
         tvEmail.setText("อีเมล์ :"+  dao.getUser().get(0).getEmail());
         tvTel.setText("เบอร์โทร :"+  dao.getUser().get(0).getTel());
@@ -118,19 +116,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (actionBarDrawerToggle.onOptionsItemSelected(item))
             return true;
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v == btnLogout) {
-            user.logOut();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-
-        }
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -179,6 +164,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 doubleBackToExitPressedOnce = false;
             }
         }, 2000);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.nav_edit_profile) {
+            startActivity(new Intent(this, UserProfileActivity.class));
+            //overridePendingTransition(R.anim.from_right, R.anim.to_left);
+        } else if (id == R.id.nav_history) {
+
+        } else if (id == R.id.nav_logout) {
+            user.logOut();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        }
+        return true;
     }
 
 }
