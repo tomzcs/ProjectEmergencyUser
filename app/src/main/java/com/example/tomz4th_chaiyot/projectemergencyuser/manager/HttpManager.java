@@ -1,17 +1,11 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.manager;
 
 import android.content.Context;
-
-
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.http.ApiService;
 import com.inthecheesefactory.thecheeselibrary.manager.Contextor;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by nuuneoi on 11/16/2014.
- */
 public class HttpManager {
 
     private static HttpManager instance;
@@ -28,10 +22,8 @@ public class HttpManager {
     private HttpManager() {
         mContext = Contextor.getInstance().getContext();
 
-
-
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.1.220.57:8080/db_connection/v1/")
+                .baseUrl("http://10.7.0.13:8080/db_connection/v1/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

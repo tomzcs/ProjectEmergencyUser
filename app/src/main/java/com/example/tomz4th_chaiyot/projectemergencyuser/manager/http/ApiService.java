@@ -14,17 +14,17 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("user/register")
-    Call<UsersCollectionDao> register(@Field("user_name") String name,
-                                      @Field("user_tel") String tel,
-                                      @Field("user_email") String email,
-                                      @Field("user_password") String password,
-                                      @Field("user_type") String type
-    );
+    Call<UsersCollectionDao> register(@Field("USER_NAME") String name,
+                                      @Field("USER_TEL") String tel,
+                                      @Field("USER_EMAIL") String email,
+                                      @Field("USER_PASSWORD") String password,
+                                      @Field("USER_IMG") String img,
+                                      @Field("USER_TYPE_ID") String type);
 
     @FormUrlEncoded
     @POST("user/login")
-    Call<UsersCollectionDao> login(@Field("user_email") String email,
-                                   @Field("user_password") String password);
+    Call<UsersCollectionDao> login(@Field("USER_EMAIL") String email,
+                                   @Field("USER_PASSWORD") String password);
 
 
 }

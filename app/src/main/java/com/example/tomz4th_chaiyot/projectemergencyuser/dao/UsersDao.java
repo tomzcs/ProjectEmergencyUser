@@ -7,31 +7,34 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class UsersDao {
-    @SerializedName("user_id")
+    @SerializedName("USER_ID")
     private int userId;
 
-    @SerializedName("user_name")
+    @SerializedName("USER_NAME")
     private String name;
 
-    @SerializedName("user_tel")
+    @SerializedName("USER_TEL")
     private String tel;
 
-    @SerializedName("user_email")
+    @SerializedName("USER_EMAIL")
     private String email;
 
-    @SerializedName("user_password")
+    @SerializedName("USER_PASSWORD")
     private String password;
 
-    @SerializedName("user_salt")
+    @SerializedName("USER_SALT")
     private String salt;
 
-    @SerializedName("user_created_at")
+    @SerializedName("USER_IMG")
+    private String img;
+
+    @SerializedName("USER_CREATED_AT")
     private String createdAt;
 
-    @SerializedName("user_change_at")
+    @SerializedName("USER_CHANGE_AT")
     private String changeAt;
 
-    @SerializedName("user_type")
+    @SerializedName("USER_TYPE_ID")
     private String type;
 
     public UsersDao() {
@@ -84,6 +87,14 @@ public class UsersDao {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public String getCreatedAt() {

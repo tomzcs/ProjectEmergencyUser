@@ -28,6 +28,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     EditText editTextTel;
     EditText editTextEmail;
     EditText editTextPassword;
+    EditText editTextPasswordConfirm;
     Button btnRegister;
 
     public RegisterFragment() {
@@ -75,6 +76,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         editTextTel = (EditText) rootView.findViewById(R.id.editTextTel);
         editTextEmail = (EditText) rootView.findViewById(R.id.editTextEmail);
         editTextPassword = (EditText) rootView.findViewById(R.id.editTextPassword);
+        editTextPasswordConfirm = (EditText) rootView.findViewById(R.id.editTextPasswordConfirm);
         btnRegister = (Button) rootView.findViewById(R.id.btnRegister);
 
         btnRegister.setOnClickListener(this);
@@ -119,6 +121,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             if (editTextPassword.getText().toString().length() == 0) {
                 editTextPassword.setError("กรุณากรอกข้อมูล รหัสผ่าน!");
             }
+            if (editTextPasswordConfirm.getText().toString().length() == 0) {
+                editTextPasswordConfirm.setError("กรุณากรอกข้อมูล รหัสผ่าน!");
+            }
             if (editTextName.getText().toString().length() == 0) {
                 editTextName.setError("กรุณากรอกข้อมูล ชื่อ-สกุล!");
             }
@@ -127,12 +132,22 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             }
             if (editTextTel.getText().toString().length() == 0) {
                 editTextTel.setError("กรุณากรอกข้อมูล เบอร์โทรศัพท์!");
-            } else {
+            }
+            if (confirmPassword(editTextPassword.getText().toString(),editTextPasswordConfirm.getText().toString())){
                 send();
+            }
+            else {
+               showToast("รหัสไม่ตรงกัน");
+                editTextPassword.setText("");
+                editTextPasswordConfirm.setText("");
             }
 
         }
 
+    }
+    public boolean confirmPassword(String password , String confirm) {
+        if (password.equals(confirm)) return true ;
+        return false ;
     }
 
     private void send() {
@@ -144,7 +159,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         if (!validateEmail()) {
             return;
         }
-        Call<UsersCollectionDao> call = HttpManager.getInstance().getService().register(name, tel, email, password, "1");
+        Call<UsersCollectionDao> call = HttpManager.getInstance().getService().register(name, tel, email, password,"123.png", "1");
         call.enqueue(new Callback<UsersCollectionDao>() {
             @Override
             public void onResponse(Call<UsersCollectionDao> call, Response<UsersCollectionDao> response) {
@@ -155,11 +170,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                     String message = data.getMessage();
                     if (data.isSuccess()) {
                         if (id == 0) {
-                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                            showToast(message);
                             editTextEmail.setText("");
 
                         } else {
-                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                            showToast(message);
                             getFragmentManager().popBackStack();
 
                         }

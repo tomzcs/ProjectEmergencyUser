@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this, UserProfileActivity.class));
             //overridePendingTransition(R.anim.from_right, R.anim.to_left);
         } else if (id == R.id.nav_history) {
+            startActivity(new Intent(this, HistoryActivity.class));
 
         } else if (id == R.id.nav_logout) {
             user.logOut();

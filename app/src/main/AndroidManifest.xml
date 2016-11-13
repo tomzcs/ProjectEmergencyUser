@@ -48,6 +48,10 @@
             android:name=".activity.UserProfileActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden"></activity>
+        <activity
+            android:name=".activity.HistoryActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
 
         <!--Google Maps API-->
         <!--กำหนด Meta Data สำหรับเวอร์ชันของ Google Play Services-->
