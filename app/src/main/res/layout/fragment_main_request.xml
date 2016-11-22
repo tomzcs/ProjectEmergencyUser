@@ -42,16 +42,45 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="รายละเอียดการร้องขอ" />
+                    android:text="รายละเอียดการร้องขอ"
+                    style="@style/style_text_request" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <Spinner
+                        android:id="@+id/spRequestDetail"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="5" />
+
+                    <ImageView
+                        android:id="@+id/btn_plus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_plus_color" />
+
+                </LinearLayout>
 
                 <EditText
                     android:id="@+id/editTextRequestDetail"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:hint="เพิ่มเติม"
+                    android:visibility="gone" />
+
 
                 <TextView
+                    style="@style/style_text_request"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:text="ลักษณะของรถ" />
 
                 <EditText
@@ -60,8 +89,10 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
+                    style="@style/style_text_request"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:text="ร้านบริการ" />
 
                 <EditText

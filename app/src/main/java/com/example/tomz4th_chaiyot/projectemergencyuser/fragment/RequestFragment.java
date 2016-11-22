@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -30,11 +31,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 public class RequestFragment extends Fragment implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, View.OnClickListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap mMap;
@@ -43,6 +46,10 @@ public class RequestFragment extends Fragment implements
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     EditText editTextRequestDetail;
     EditText editTextRequestDetailCar;
+    Spinner spTest;
+    private ArrayList<String> text = new ArrayList<String>();
+    ImageView btnPlus;
+
 
     public RequestFragment() {
         super();
@@ -94,6 +101,27 @@ public class RequestFragment extends Fragment implements
 
         editTextRequestDetail = (EditText) rootView.findViewById(R.id.editTextRequestDetail);
         editTextRequestDetailCar = (EditText) rootView.findViewById(R.id.editTextRequestDetailCar);
+        spTest = (Spinner) rootView.findViewById(R.id.spRequestDetail);
+        createThaiClubData();
+
+        // Adapter ตัวแรก
+        ArrayAdapter<String> adapterText = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_dropdown_item_1line, text);
+        spTest.setAdapter(adapterText);
+
+        btnPlus = (ImageView) rootView.findViewById(R.id.btn_plus);
+        btnPlus.setOnClickListener(this);
+
+
+    }
+    private void createThaiClubData() {
+
+        text.add("รถเสีย");
+        text.add("รถยางแบน");
+        text.add("แบตเตอรี่หมด");
+        text.add("หม้อน้ำรั่ว");
+        text.add("น้ำมันรั่ว");
+
 
     }
 
@@ -198,8 +226,8 @@ public class RequestFragment extends Fragment implements
         mMap.clear();
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-        editTextRequestDetail.setText(latitude+"");
-        editTextRequestDetailCar.setText(longitude+"");
+        editTextRequestDetail.setText(latitude + "");
+        editTextRequestDetailCar.setText(longitude + "");
 
         LatLng latlng = new LatLng(latitude, longitude);
         MarkerOptions markFrom = new MarkerOptions().position(new LatLng(latitude, longitude)).title("ตำแหน่งปัจจุบัน");
@@ -209,4 +237,10 @@ public class RequestFragment extends Fragment implements
     }
 
 
+    @Override
+    public void onClick(View v) {
+        if (v == btnPlus){
+            editTextRequestDetail.setVisibility(View.VISIBLE);
+        }
+    }
 }

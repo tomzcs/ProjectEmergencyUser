@@ -37,6 +37,25 @@ public class UsersDao {
     @SerializedName("USER_TYPE_ID")
     private String type;
 
+    @SerializedName("CAR_ID")
+    private int carId;
+
+    @SerializedName("CAR_TYPE")
+    private String carType;
+
+    @SerializedName("CAR_NAME")
+    private String carName;
+
+    @SerializedName("CAR_COLOR")
+    private String carColor;
+
+    @SerializedName("CAR_NUMBER")
+    private String carNumber;
+
+    @SerializedName("USER_TYPE_NAME")
+    private String typeName;
+
+
     public UsersDao() {
 
     }
@@ -119,5 +138,53 @@ public class UsersDao {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getCarId() {
+        return carId;
+    }
+
+    public void setCarId(int carId) {
+        this.carId = carId;
+    }
+
+    public String getCarType() {
+        return carType;
+    }
+
+    public void setCarType(String carType) {
+        this.carType = carType;
+    }
+
+    public String getCarName() {
+        return carName;
+    }
+
+    public void setCarName(String carName) {
+        this.carName = carName;
+    }
+
+    public String getCarColor() {
+        return carColor;
+    }
+
+    public void setCarColor(String carColor) {
+        this.carColor = carColor;
+    }
+
+    public String getCarNumber() {
+        return carNumber;
+    }
+
+    public void setCarNumber(String carNumber) {
+        this.carNumber = carNumber;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 }

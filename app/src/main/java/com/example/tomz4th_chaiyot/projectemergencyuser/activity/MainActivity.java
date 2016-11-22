@@ -1,5 +1,6 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -13,21 +14,31 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.crashlytics.android.Crashlytics;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.RequestFragment;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceListFragment;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.carManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.userManager;
 
-
 import io.fabric.sdk.android.Fabric;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -43,7 +54,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView tvTel;
     private boolean doubleBackToExitPressedOnce;
     private NavigationView navigationView;
-
+    private EditText carType;
+    private EditText carName;
+    private EditText carColor;
+    private EditText carNumber;
+    private int userId = 0;
+    CarsCollectionDao daocar;
+    carManager car;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +78,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         initInstances();
 
+
     }
 
     private void initInstances() {
+        car = new carManager();
         //toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,9 +112,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvName = (TextView) headerLayout.findViewById(R.id.tvName);
         tvEmail = (TextView) headerLayout.findViewById(R.id.tvEmail);
         tvTel = (TextView) headerLayout.findViewById(R.id.tvTel);
-        tvName.setText("ชื่อ :"+  dao.getUser().get(0).getName());
-        tvEmail.setText("อีเมล์ :"+  dao.getUser().get(0).getEmail());
-        tvTel.setText("เบอร์โทร :"+  dao.getUser().get(0).getTel());
+        tvName.setText("ชื่อ :" + dao.getUser().get(0).getName());
+        tvEmail.setText("อีเมล์ :" + dao.getUser().get(0).getEmail());
+        tvTel.setText("เบอร์โทร :" + dao.getUser().get(0).getTel());
+
+        getCars();
+
 
     }
 
@@ -155,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return;
         }
         this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this,"กดอีกครั้งเพื่อ ออก", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "กดอีกครั้งเพื่อ ออก", Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(new Runnable() {
 
@@ -184,6 +206,107 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
         }
         return true;
+    }
+
+    private void send() {
+        String type = carType.getText().toString();
+        String name = carName.getText().toString();
+        String color = carColor.getText().toString();
+        String number = carNumber.getText().toString();
+        userId = dao.getUser().get(0).getUserId();
+
+        Call<CarsCollectionDao> call = HttpManager.getInstance().getService().insertCar(type, name, color, number, userId);
+        call.enqueue(new Callback<CarsCollectionDao>() {
+            @Override
+            public void onResponse(Call<CarsCollectionDao> call, Response<CarsCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    CarsCollectionDao data = response.body();
+                    String message = data.getMessage();
+                    if (data.isSuccess()) {
+                        showToast(message);
+                    } else {
+                        showToast(message);
+                    }
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                    showToast("ลงทะเบียนล้มเหลว");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CarsCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
+
+            }
+
+        });
+
+    }
+
+    private void getCars() {
+        userId = dao.getUser().get(0).getUserId();
+
+        Call<CarsCollectionDao> call = HttpManager.getInstance().getService().getCar(userId);
+        call.enqueue(new Callback<CarsCollectionDao>() {
+            @Override
+            public void onResponse(Call<CarsCollectionDao> call, Response<CarsCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    daocar = response.body();
+                    if (daocar.isSuccess()) {
+                        if (daocar.getCar().get(0).getCarName() == null) {
+                            AlertDialog.Builder builder =
+                                    new AlertDialog.Builder(MainActivity.this);
+                            LayoutInflater inflater = getLayoutInflater();
+
+                            View view = inflater.inflate(R.layout.dialog_car, null);
+                            builder.setView(view);
+
+                            carType = (EditText) view.findViewById(R.id.edtCarType);
+                            carName = (EditText) view.findViewById(R.id.edtCarName);
+                            carColor = (EditText) view.findViewById(R.id.edtCarColor);
+                            carNumber = (EditText) view.findViewById(R.id.edtCarNumber);
+
+
+                            builder.setPositiveButton("เพิ่มข้อมูล", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    send();
+                                }
+                            });
+                            builder.setNegativeButton("ข้าม", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+
+                            builder.show();
+                        }
+                    } else {
+                        Log.e("error", "555555555555555555");
+                    }
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                    showToast("ลงทะเบียนล้มเหลว");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CarsCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
+
+            }
+
+        });
+
+    }
+
+    private void showToast(String text) {
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
 
 }

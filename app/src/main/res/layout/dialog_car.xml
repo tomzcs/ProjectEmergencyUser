@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ff3eaff9"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="center"
+            android:src="@drawable/ic_edit" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="เพิ่มข้อมูลรถ"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:padding="16sp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/edtCarType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ประเภทรถ"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/edtCarName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ยี่ห้อรถ/รุ่น"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/edtCarColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="สีรถ"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/edtCarNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:hint="ป้ายทะเบียน"
+            android:inputType="text" />
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
