@@ -1,6 +1,8 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.manager.http;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 
 import retrofit2.Call;
@@ -8,7 +10,6 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 /**
@@ -49,12 +50,25 @@ public interface ApiService {
                                       @Field("USER_ID") int userId
     );
 
+    @FormUrlEncoded
+    @POST("user/insertRequest")
+    Call<RequestCollectionDao> insertRequest(@Field("REQUEST_DETAIL") String requestDetail,
+                                             @Field("REQUEST_DETAIL_CAR") String requestDetailCar,
+                                             @Field("REQUEST_LAT") String requestLat,
+                                             @Field("REQUEST_LON") String requestLon,
+                                             @Field("STATUS_ID") int statusId,
+                                             @Field("USER_ID") int userId,
+                                             @Field("USER_ID_SERVICE") int userIdService
+    );
+
     @GET("user/getCar/{id}")
-    Call<CarsCollectionDao> getCar(@Path("id") int userId  );
+    Call<CarsCollectionDao> getCar(@Path("id") int userId);
 
     @GET("user/getUsersShow/{id}")
-    Call<UsersCollectionDao> getUsersShow(@Path("id") int userId  );
+    Call<UsersCollectionDao> getUsersShow(@Path("id") int userId);
 
+    @GET("user/getRequestUser/{id}")
+    Call<RequestCollectionDao> getRequestUser(@Path("id") int userId);
 
 
 }

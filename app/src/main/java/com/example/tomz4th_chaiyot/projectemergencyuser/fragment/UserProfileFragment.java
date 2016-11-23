@@ -305,6 +305,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             @Override
             public void onFailure(Call<CarsCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
+                showToast(t.toString());
 
 
             }
