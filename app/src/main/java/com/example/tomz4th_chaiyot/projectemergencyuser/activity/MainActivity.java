@@ -1,5 +1,6 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.activity;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -21,19 +22,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarColorCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarNameCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarTypeCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.RequestFragment;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceListFragment;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HistoryListManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.carManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.userManager;
+
+import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
@@ -61,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int userId = 0;
     CarsCollectionDao daocar;
     carManager car;
+    private ArrayList<String> spTextCarType = new ArrayList<String>();
+    private ArrayList<String> spTextCarName = new ArrayList<String>();
+    private ArrayList<String> spTextCarColor = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,11 +221,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private void send() {
-        String type = carType.getText().toString();
-        String name = carName.getText().toString();
-        String color = carColor.getText().toString();
-        String number = carNumber.getText().toString();
+    private void send(String type,String name,String color,String number ) {
         userId = dao.getUser().get(0).getUserId();
 
         Call<CarsCollectionDao> call = HttpManager.getInstance().getService().insertCar(type, name, color, number, userId);
@@ -257,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     daocar = response.body();
                     if (daocar.isSuccess()) {
                         if (daocar.getCar().get(0).getCarName() == null) {
-                            AlertDialog.Builder builder =
+                            /*final AlertDialog.Builder builder =
                                     new AlertDialog.Builder(MainActivity.this);
                             LayoutInflater inflater = getLayoutInflater();
 
@@ -269,13 +278,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             carColor = (EditText) view.findViewById(R.id.edtCarColor);
                             carNumber = (EditText) view.findViewById(R.id.edtCarNumber);
 
+                            final TextView tvCarType = (TextView) view.findViewById(R.id.tvCarType);
+                            TextView tvCarName = (TextView) view.findViewById(R.id.tvCarName);
 
-                            builder.setPositiveButton("เพิ่มข้อมูล", new DialogInterface.OnClickListener() {
+                            //Spinner
+                            final Spinner spCarType = (Spinner) view.findViewById(R.id.spCarType);
+                            createCarType();
+                            ArrayAdapter<String> adapterCarType = new ArrayAdapter<String>(getBaseContext(),
+                                    R.layout.support_simple_spinner_dropdown_item, spTextCarType);
+                            spCarType.setAdapter(adapterCarType);
+
+                            final Spinner spCarName = (Spinner) view.findViewById(R.id.spCarName);
+
+                            final Button btnNextName = (Button) view.findViewById(R.id.btnNextName);
+                            btnNextName.setOnClickListener(new View.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    send();
+                                public void onClick(View v) {
+                                    String text = spCarType.getSelectedItem().toString().substring(0, 1);
+                                    if (text.equals("ก")) {
+                                        showToast(text);
+                                    } else {
+                                        int id = Integer.parseInt(text);
+                                        tvCarType.setVisibility(View.GONE);
+                                        spCarType.setVisibility(View.GONE);
+                                        btnNextName.setVisibility(View.GONE);
+                                        createCarName(id);
+                                        ArrayAdapter<String> adapterCarName = new ArrayAdapter<String>(getBaseContext(),
+                                                R.layout.support_simple_spinner_dropdown_item, spTextCarName);
+                                        spCarName.setAdapter(adapterCarName);
+                                    }
                                 }
                             });
+                            Button btnExit = (Button) view.findViewById(R.id.btnExit);
+                            btnExit.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    builder.setNegativeButton("ข้าม", new  {
+
+                                    });
+                                }
+                            });
+
+
+                            builder.setPositiveButton("ต่อไป", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //send();
+                                }
+                            });
+
                             builder.setNegativeButton("ข้าม", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -284,6 +335,158 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             });
 
                             builder.show();
+*/
+                            final Dialog dialog = new Dialog(MainActivity.this);
+                            dialog.setContentView(R.layout.dialog_car);
+
+                            //Spinner
+                            final Spinner spCarType = (Spinner) dialog.findViewById(R.id.spCarType);
+                            spTextCarType.clear();
+                            spCarType.setAdapter(new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_dropdown_item_1line,spTextCarType));
+                            createCarType();
+                            ArrayAdapter<String> adapterCarType = new ArrayAdapter<String>(getBaseContext(),
+                                    R.layout.support_simple_spinner_dropdown_item, spTextCarType);
+                            spCarType.setAdapter(adapterCarType);
+
+                            final Spinner spCarName = (Spinner) dialog.findViewById(R.id.spCarName);
+                            final Spinner spCarColor = (Spinner) dialog.findViewById(R.id.spCarColor);
+
+                            final TextView tvCarType = (TextView) dialog.findViewById(R.id.tvCarType);
+                            final TextView tvCarName = (TextView) dialog.findViewById(R.id.tvCarName);
+                            final TextView tvCarColor = (TextView) dialog.findViewById(R.id.tvCarColor);
+                            final TextView tvCarNumber = (TextView) dialog.findViewById(R.id.tvCarNumber);
+
+                            final EditText ediCarNumber = (EditText) dialog.findViewById(R.id.edtCarNumber);
+
+
+                            final Button btnNextName = (Button) dialog.findViewById(R.id.btnNextName);
+                            final Button btnExit = (Button) dialog.findViewById(R.id.btnExit);
+                            final Button btnBackType = (Button) dialog.findViewById(R.id.btnBackType);
+                            final Button btnNextColor = (Button) dialog.findViewById(R.id.btnNextColor);
+                            final Button btnBackName = (Button) dialog.findViewById(R.id.btnBackName);
+                            final Button btnSuccess = (Button) dialog.findViewById(R.id.btnSuccess);
+
+                            btnNextName.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String text = spCarType.getSelectedItem().toString().substring(0, 1);
+                                    if (text.equals("ก")) {
+                                        showToast("กรุณาเลือกประเภทรถ");
+                                    } else {
+                                        int id = Integer.parseInt(text);
+                                        tvCarType.setVisibility(View.GONE);
+                                        spCarType.setVisibility(View.GONE);
+                                        btnNextName.setVisibility(View.GONE);
+                                        btnExit.setVisibility(View.GONE);
+
+                                        spTextCarName.clear();
+                                        spCarName.setAdapter(new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_dropdown_item_1line,spTextCarName));
+                                        createCarName(id);
+                                        ArrayAdapter<String> adapterCarName = new ArrayAdapter<String>(getBaseContext(),
+                                                R.layout.support_simple_spinner_dropdown_item, spTextCarName);
+                                        spCarName.setAdapter(adapterCarName);
+
+                                        tvCarName.setVisibility(View.VISIBLE);
+                                        spCarName.setVisibility(View.VISIBLE);
+                                        btnBackType.setVisibility(View.VISIBLE);
+                                        btnNextColor.setVisibility(View.VISIBLE);
+
+                                    }
+                                }
+                            });
+
+                            btnExit.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            btnBackType.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    tvCarType.setVisibility(View.VISIBLE);
+                                    spCarType.setVisibility(View.VISIBLE);
+                                    btnNextName.setVisibility(View.VISIBLE);
+                                    btnExit.setVisibility(View.VISIBLE);
+
+                                    tvCarName.setVisibility(View.GONE);
+                                    spCarName.setVisibility(View.GONE);
+                                    btnBackType.setVisibility(View.GONE);
+                                    btnNextColor.setVisibility(View.GONE);
+                                }
+                            });
+
+                            btnNextColor.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String text = spCarName.getSelectedItem().toString().substring(0, 1);
+                                    if (text.equals("ก")) {
+                                        showToast("กรุณาเลือกยี่ห้อ/รุ่น รถ");
+                                    } else {
+                                        tvCarName.setVisibility(View.GONE);
+                                        spCarName.setVisibility(View.GONE);
+                                        btnBackType.setVisibility(View.GONE);
+                                        btnNextColor.setVisibility(View.GONE);
+
+
+                                        spTextCarColor.clear();
+                                        spCarColor.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_dropdown_item_1line, spTextCarColor));
+                                        createCarColor();
+                                        ArrayAdapter<String> adapterCarColor = new ArrayAdapter<String>(getBaseContext(),
+                                                R.layout.support_simple_spinner_dropdown_item, spTextCarColor);
+                                        spCarColor.setAdapter(adapterCarColor);
+
+                                        tvCarColor.setVisibility(View.VISIBLE);
+                                        spCarColor.setVisibility(View.VISIBLE);
+                                        tvCarNumber.setVisibility(View.VISIBLE);
+                                        ediCarNumber.setVisibility(View.VISIBLE);
+                                        btnBackName.setVisibility(View.VISIBLE);
+                                        btnSuccess.setVisibility(View.VISIBLE);
+                                    }
+
+                                }
+                            });
+
+                            btnBackName.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    tvCarColor.setVisibility(View.GONE);
+                                    spCarColor.setVisibility(View.GONE);
+                                    tvCarNumber.setVisibility(View.GONE);
+                                    ediCarNumber.setVisibility(View.GONE);
+                                    btnBackName.setVisibility(View.GONE);
+                                    btnSuccess.setVisibility(View.GONE);
+
+                                    tvCarName.setVisibility(View.VISIBLE);
+                                    spCarName.setVisibility(View.VISIBLE);
+                                    btnBackType.setVisibility(View.VISIBLE);
+                                    btnNextColor.setVisibility(View.VISIBLE);
+                                }
+                            });
+
+                            btnSuccess.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    String text = spCarColor.getSelectedItem().toString().substring(0, 1);
+                                    if (text.equals("ก")) {
+                                        showToast("กรุณาเลือกสีรถ");
+                                    }else
+                                    if(ediCarNumber.getText().length() == 0){
+                                        ediCarNumber.setError("กรุณากรอกข้อมูลป้ายทะเบียน");
+                                    }
+                                    else{
+                                        String type = spCarType.getSelectedItem().toString().substring(2);
+                                        String name = spCarName.getSelectedItem().toString().substring(2);
+                                        String color = spCarColor.getSelectedItem().toString().substring(2);
+                                        String number = ediCarNumber.getText().toString();
+                                        send(type, name, color, number);
+                                        dialog.dismiss();
+                                    }
+                                }
+                            });
+
+                            dialog.show();
                         }
                     } else {
                         Log.e("error", "555555555555555555");
@@ -305,9 +508,106 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void createCarType() {
+        Call<CarTypeCollectionDao> call = HttpManager.getInstance().getService().getCarType();
+        call.enqueue(new Callback<CarTypeCollectionDao>() {
+            @Override
+            public void onResponse(Call<CarTypeCollectionDao> call, Response<CarTypeCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    CarTypeCollectionDao daoCarType;
+                    daoCarType = response.body();
+                    if (daoCarType.isSuccess()) {
+                        int numRows = daoCarType.getNumRows();
+                        for (int i = 0; i < numRows; i++) {
+                            spTextCarType.add("" + daoCarType.getCarType().get(i).getCarTypeId() + "." + daoCarType.getCarType().get(i).getCarTypeName());
+                        }
+                    }
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CarTypeCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
+
+            }
+
+        });
+        spTextCarType.add("กรุณาเลือกประเภทรถ");
+    }
+
+    private void createCarName(int id) {
+        Call<CarNameCollectionDao> call = HttpManager.getInstance().getService().getCarName(id);
+        call.enqueue(new Callback<CarNameCollectionDao>() {
+            @Override
+            public void onResponse(Call<CarNameCollectionDao> call, Response<CarNameCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    CarNameCollectionDao daoCarName;
+                    daoCarName = response.body();
+
+                    if (daoCarName.isSuccess()) {
+                        int numRows = daoCarName.getNumRows();
+                        for (int i = 0; i < numRows; i++) {
+                            int no = i+1;
+                            spTextCarName.add(""+ no + "." + daoCarName.getCarName().get(i).getCarNameName());
+                        }
+                    }
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CarNameCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
+
+            }
+
+        });
+        spTextCarName.add("กรุณาเลือกยี่ห้อ/รุ่น รถ");
+    }
+    private void createCarColor() {
+        Call<CarColorCollectionDao> call = HttpManager.getInstance().getService().getCarColor();
+        call.enqueue(new Callback<CarColorCollectionDao>() {
+            @Override
+            public void onResponse(Call<CarColorCollectionDao> call, Response<CarColorCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    CarColorCollectionDao daoCarColor;
+                    daoCarColor = response.body();
+                    if (daoCarColor.isSuccess()) {
+                        int numRows = daoCarColor.getNumRows();
+                        for (int i = 0; i < numRows; i++) {
+                            int no = i+1;
+                            spTextCarColor.add("" + no + "." + daoCarColor.getCarColor().get(i).getCarColorName());
+                        }
+                    }
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CarColorCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
+
+            }
+
+        });
+        spTextCarColor.add("กรุณาเลือกสีรถ");
+    }
+
     private void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
+
 
 }
 

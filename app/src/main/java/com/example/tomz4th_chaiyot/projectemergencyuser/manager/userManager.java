@@ -3,7 +3,6 @@ package com.example.tomz4th_chaiyot.projectemergencyuser.manager;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 import com.google.gson.Gson;
 import com.inthecheesefactory.thecheeselibrary.manager.Contextor;
@@ -21,33 +20,31 @@ public class userManager {
     private Context mContext;
 
 
-
     public userManager() {
 
         mContext = Contextor.getInstance().getContext();
 
-        sp = mContext.getSharedPreferences("user",Context.MODE_PRIVATE);
+        sp = mContext.getSharedPreferences("user", Context.MODE_PRIVATE);
         editor = sp.edit();
         LoadCache();
     }
 
-    public void SaveCache(){
+    public void SaveCache() {
         UsersCollectionDao cacheDao = new UsersCollectionDao();
-        if (dao != null &dao.getUser() != null)
+        if (dao != null & dao.getUser() != null)
             cacheDao.setUser(dao.getUser());
 
         String json = new Gson().toJson(cacheDao);
 
-
-        editor.putString("user_data_json" ,json);
+        editor.putString("user_data_json", json);
         editor.apply();
 
     }
 
-    public void LoadCache(){
+    public void LoadCache() {
 
-        String json = sp.getString("user_data_json",null);
-        if (json == null){
+        String json = sp.getString("user_data_json", null);
+        if (json == null) {
             return;
         }
         dao = new Gson().fromJson(json, UsersCollectionDao.class);
@@ -61,7 +58,7 @@ public class userManager {
         this.dao = dao;
     }
 
-    public void logOut(){
+    public void logOut() {
         editor.clear();
         editor.apply();
     }

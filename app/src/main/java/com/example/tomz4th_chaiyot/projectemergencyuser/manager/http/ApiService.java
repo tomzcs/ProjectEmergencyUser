@@ -1,5 +1,8 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.manager.http;
 
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarColorCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarNameCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarTypeCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestDao;
@@ -69,6 +72,15 @@ public interface ApiService {
 
     @GET("user/getRequestUser/{id}")
     Call<RequestCollectionDao> getRequestUser(@Path("id") int userId);
+
+    @GET("user/getCarType")
+    Call<CarTypeCollectionDao> getCarType();
+
+    @GET("user/getCarName/{id}")
+    Call<CarNameCollectionDao> getCarName(@Path("id") int userId);
+
+    @GET("user/getCarColor")
+    Call<CarColorCollectionDao> getCarColor();
 
 
 }

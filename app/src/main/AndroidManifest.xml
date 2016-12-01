@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <!--  ใช้ GPS เพื่อหาตำแหน่งของผู้ใช้ให้แม่นยำที่สุดเท่าที่ทำได้ -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -31,7 +30,6 @@
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -62,11 +60,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD8LVxhM4fX3l0bWNTVh374YNsZiZTdRz4" />
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="f1fddb09decc3e25d1186c5a1e3afe7ba35c0373" />
-
 
     </application>
 

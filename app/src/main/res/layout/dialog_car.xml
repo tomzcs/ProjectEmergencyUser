@@ -13,7 +13,7 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="64dp"
+            android:layout_height="54dp"
             android:contentDescription="@string/app_name"
             android:scaleType="center"
             android:src="@drawable/ic_edit" />
@@ -30,43 +30,158 @@
     </LinearLayout>
 
     <LinearLayout
-        android:padding="16sp"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16sp">
 
         <EditText
             android:id="@+id/edtCarType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="ประเภทรถ"
-            android:inputType="text" />
+            android:inputType="text"
+            android:visibility="gone" />
 
-        <EditText
-            android:id="@+id/edtCarName"
+        <TextView
+            android:id="@+id/tvCarType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="ยี่ห้อรถ/รุ่น"
-            android:inputType="text" />
+            android:text="ประเภทรถ"
+            android:visibility="visible" />
 
-        <EditText
-            android:id="@+id/edtCarColor"
+        <Spinner
+            android:id="@+id/spCarType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="สีรถ"
-            android:inputType="text" />
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnExit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="#0000"
+                android:text="ข้าม"
+                android:textColor="#D50000"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/btnNextName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:background="#0000"
+                android:text="ต่อไป"
+                android:textColor="#D50000"
+                android:visibility="visible" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tvCarName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ยี่ห้อรถ"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/spCarName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnBackType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#0000"
+                android:text="ย้อนกลับ"
+                android:textColor="#D50000"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnNextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#0000"
+                android:text="ต่อไป"
+                android:textColor="#D50000"
+                android:visibility="gone" />
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvCarColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="สีรถ"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/spCarColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+
+        <TextView
+            android:id="@+id/tvCarNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ป้ายทะเบียน"
+            android:visibility="gone" />
 
         <EditText
             android:id="@+id/edtCarNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:hint="ป้ายทะเบียน"
-            android:inputType="text" />
+            android:inputType="text"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnBackName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#0000"
+                android:text="ย้อนกลับ"
+                android:textColor="#D50000"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnSuccess"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#0000"
+                android:text="เสร็จสิ้น"
+                android:textColor="#D50000"
+                android:visibility="gone" />
+
+
+        </LinearLayout>
 
 
     </LinearLayout>
-
 
 
 </LinearLayout>

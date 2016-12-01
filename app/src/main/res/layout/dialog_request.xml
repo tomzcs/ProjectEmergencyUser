@@ -1,89 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#ff3eaff9"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="64dp"
-            android:layout_marginRight="10dp"
-            android:contentDescription="@string/app_name"
-            android:scaleType="center"
-            android:src="@drawable/ic_car" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="ข้อมูลคำร้องขอ"
-            android:textColor="@android:color/white"
-            android:textSize="20sp" />
-
-
-    </LinearLayout>
-
-    <LinearLayout
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16sp">
+        fancy:cardElevation="2dp"
+        fancy:cardUseCompatPadding="true">
 
-        <TextView
-            android:layout_marginBottom="5dp"
-            android:id="@+id/tvDate"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="วัน/เวลา"
-            android:inputType="text" />
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_marginBottom="5dp"
-            android:id="@+id/tvStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="สถานะ"
-            android:inputType="text" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#ff3eaff9"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-        <ImageView
-            android:layout_margin="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="64dp"
+                    android:layout_marginRight="10dp"
+                    android:contentDescription="@string/app_name"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_car" />
 
-        <TextView
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:id="@+id/tvRequestDetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="รายละเอียดการร้องขอ"
-            android:inputType="text" />
-
-        <TextView
-            android:layout_marginBottom="5dp"
-            android:id="@+id/tvRequestDetailCar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="ลักษณะของรถ"
-            android:inputType="text" />
-
-        <TextView
-            android:id="@+id/tvUserIdService"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="ร้านบริการ"
-            android:inputType="text" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="ข้อมูลคำร้องขอ"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp" />
 
 
-    </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16sp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="วัน/เวลา : "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="สถานะ : "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp" />
+
+                </LinearLayout>
 
 
-</LinearLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="5dp"
+                    android:background="@android:color/darker_gray" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="รายละเอียดการร้องขอ"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvRequestDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="ลักษณะของรถ"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvRequestDetailCar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="ร้านที่ให้บริการ"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvUserIdService"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

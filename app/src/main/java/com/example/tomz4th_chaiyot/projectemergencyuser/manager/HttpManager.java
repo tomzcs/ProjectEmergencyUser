@@ -23,7 +23,7 @@ public class HttpManager {
         mContext = Contextor.getInstance().getContext();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.30:8080/db_connection/v1/")
+                .baseUrl("http://192.168.137.1:8080/db_connection/v1/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

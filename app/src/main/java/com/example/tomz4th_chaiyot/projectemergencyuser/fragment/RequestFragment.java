@@ -51,7 +51,8 @@ public class RequestFragment extends Fragment implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener, View.OnClickListener {
+        LocationListener,
+        View.OnClickListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap mMap;
@@ -67,6 +68,8 @@ public class RequestFragment extends Fragment implements
     private ArrayList<String> text = new ArrayList<String>();
     ImageView btnPlus;
     Button btnSendRequest;
+    ImageView btnClear;
+    ImageView btnDelete;
     private UsersCollectionDao dao;
     private RequestCollectionDao daoRequest;
     private userManager user;
@@ -134,27 +137,29 @@ public class RequestFragment extends Fragment implements
 
         //Spinner
         spRequestDetail = (Spinner) rootView.findViewById(R.id.spRequestDetail);
-        createThaiClubData();
+        createTextData();
         ArrayAdapter<String> adapterText = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_dropdown_item_1line, text);
         spRequestDetail.setAdapter(adapterText);
 
 
         //End
+
         btnPlus = (ImageView) rootView.findViewById(R.id.btn_plus);
         btnPlus.setOnClickListener(this);
-
+        btnClear = (ImageView) rootView.findViewById(R.id.btn_clear);
+        btnClear.setOnClickListener(this);
+        btnDelete = (ImageView) rootView.findViewById(R.id.btn_delete);
+        btnDelete.setOnClickListener(this);
 
     }
 
-    private void createThaiClubData() {
-
+    private void createTextData() {
         text.add("รถเสีย");
         text.add("รถยางแบน");
         text.add("แบตเตอรี่หมด");
         text.add("หม้อน้ำรั่ว");
         text.add("น้ำมันรั่ว");
-
     }
 
     @Override
@@ -274,9 +279,25 @@ public class RequestFragment extends Fragment implements
     public void onClick(View v) {
         if (v == btnPlus) {
             editTextRequestDetail.setVisibility(View.VISIBLE);
+            btnPlus.setVisibility(View.GONE);
+            btnDelete.setVisibility(View.VISIBLE);
+        }
+        if (v == btnClear) {
+            editTextRequestDetailCar.setText("");
         }
         if (v == btnSendRequest) {
-            sendRequest();
+            if (editTextRequestDetailCar.getText().toString().length() == 0) {
+                editTextRequestDetailCar.setError("กรุณากรอกข้อมูลลักษณะรถของคุณ!");
+            } else {
+                sendRequest();
+            }
+        }
+        if (v == btnDelete) {
+            editTextRequestDetail.setVisibility(View.GONE);
+            editTextRequestDetail.setText("");
+            btnPlus.setVisibility(View.VISIBLE);
+            btnDelete.setVisibility(View.GONE);
+
         }
     }
 
@@ -316,6 +337,7 @@ public class RequestFragment extends Fragment implements
             }
         });
     }
+
     private void getRequestUser() {
         int id = dao.getUser().get(0).getUserId();
 
@@ -340,11 +362,11 @@ public class RequestFragment extends Fragment implements
                         TextView tvDate = (TextView) view.findViewById(R.id.tvDate);
                         TextView tvStatus = (TextView) view.findViewById(R.id.tvStatus);
 
-                        tvRequestDetail.setText("รายละเอียดการร้องขอ :"+daoRequestUser.getRequest().get(0).getRequestDetail());
-                        tvRequestDetailCar.setText("ลักษณะของรถ :"+daoRequestUser.getRequest().get(0).getRequestDetailCar());
-                        tvUserIdService.setText("ร้านที่ให้บริการ :"+daoRequestUser.getRequest().get(0).getUserName());
-                        tvDate.setText("วัน/เวลา :"+daoRequestUser.getRequest().get(0).getRequestCreatedAt());
-                        tvStatus.setText("สถานะ :"+daoRequestUser.getRequest().get(0).getStatusName());
+                        tvRequestDetail.setText("" + daoRequestUser.getRequest().get(0).getRequestDetail());
+                        tvRequestDetailCar.setText("" + daoRequestUser.getRequest().get(0).getRequestDetailCar());
+                        tvUserIdService.setText("" + daoRequestUser.getRequest().get(0).getUserName());
+                        tvDate.setText("" + daoRequestUser.getRequest().get(0).getRequestCreatedAt());
+                        tvStatus.setText("" + daoRequestUser.getRequest().get(0).getStatusName());
 
                         builder.setNegativeButton("ปิด", new DialogInterface.OnClickListener() {
                             @Override
@@ -375,13 +397,13 @@ public class RequestFragment extends Fragment implements
     private void sendRequest() {
         int idUser = dao.getUser().get(0).getUserId();
 
-        String requestDetail = editTextRequestDetail.getText().toString();
-
+        String request = spRequestDetail.getSelectedItem().toString();
+        String requestDetail = "  " + editTextRequestDetail.getText().toString();
         String requestDetailCar = editTextRequestDetailCar.getText().toString();
         String requestLat = edtLat.getText().toString();
         String requestLon = edtLon.getText().toString();
 
-        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().insertRequest("10", requestDetailCar, requestLat, requestLon, 1, idUser, 15);
+        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().insertRequest(request + requestDetail, requestDetailCar, requestLat, requestLon, 1, idUser, 15);
         call.enqueue(new Callback<RequestCollectionDao>() {
             @Override
             public void onResponse(Call<RequestCollectionDao> call, Response<RequestCollectionDao> response) {
@@ -394,7 +416,6 @@ public class RequestFragment extends Fragment implements
                         getRequestUser();
                     } else {
                         showToast(message);
-
                     }
                 } else {
                     Log.e("Error", response.errorBody().toString());
