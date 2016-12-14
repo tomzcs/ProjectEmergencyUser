@@ -1,29 +1,40 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.fragment;
 
-import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
-import com.example.tomz4th_chaiyot.projectemergencyuser.activity.MainActivity;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.userManager;
 
+import com.kosalgeek.android.photoutil.ImageBase64;
+import com.kosalgeek.android.photoutil.ImageLoader;
+import com.nguyenhoanglam.imagepicker.activity.ImagePickerActivity;
+import com.nguyenhoanglam.imagepicker.model.Image;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -54,6 +65,12 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     EditText edtCarNumber;
     Button btnEditCar;
     private int userId = 0;
+
+    TextView btnAddPhoto;
+    private int REQUEST_CODE_PICKER = 2000;
+    private ArrayList<Image> images = new ArrayList<>();
+    ImageView imgPhoto;
+    Bitmap bitmap;
 
     public UserProfileFragment() {
         super();
@@ -103,13 +120,11 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         edtCarNumber = (EditText) rootView.findViewById(R.id.edtCarNumber);
         btnOpenPass = (Button) rootView.findViewById(R.id.btnOpenPass);
         btnEditCar = (Button) rootView.findViewById(R.id.btnEditCar);
-
+        imgPhoto = (ImageView) rootView.findViewById(R.id.imgPhoto);
         btnEdit.setOnClickListener(this);
         btnOpenPass.setOnClickListener(this);
         btnEditCar.setOnClickListener(this);
         getUsersShow();
-
-
 
 
         tvPass = (TextView) rootView.findViewById(R.id.tvPass);
@@ -118,6 +133,10 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         editTextPasswordNew = (EditText) rootView.findViewById(R.id.editTextPasswordNew);
         tvPassNewConfirm = (TextView) rootView.findViewById(R.id.tvPassNewConfirm);
         editTextPasswordNewConfirm = (EditText) rootView.findViewById(R.id.editTextPasswordNewConfirm);
+
+        btnAddPhoto = (TextView) rootView.findViewById(R.id.tvAddPhoto);
+        btnAddPhoto.setOnClickListener(this);
+
     }
 
     @Override
@@ -162,15 +181,15 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             btnOpenPass.setVisibility(View.GONE);
         }
         if (v == btnEdit) {
-            if (editTextPassword.getText().toString().length() == 0){
+            if (editTextPassword.getText().toString().length() == 0) {
                 String password = "null";
                 String passwordNew = "null";
-                send(password,passwordNew);
-            }else{
-                if (confirmPassword(editTextPasswordNew.getText().toString(),editTextPasswordNewConfirm.getText().toString())){
+                send(password, passwordNew);
+            } else {
+                if (confirmPassword(editTextPasswordNew.getText().toString(), editTextPasswordNewConfirm.getText().toString())) {
                     String password = editTextPassword.getText().toString();
                     String passwordNew = editTextPasswordNewConfirm.getText().toString();
-                    send(password,passwordNew);
+                    send(password, passwordNew);
                     tvPass.setVisibility(View.GONE);
                     editTextPassword.setVisibility(View.GONE);
 
@@ -181,8 +200,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                     editTextPasswordNewConfirm.setVisibility(View.GONE);
 
                     btnOpenPass.setVisibility(View.VISIBLE);
-                }
-                else{
+                } else {
                     showToast("รหัสใหม่ไม่ตรงกัน");
                     editTextPasswordNew.setText("");
                     editTextPasswordNewConfirm.setText("");
@@ -191,17 +209,59 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             }
 
         }
-        if (v == btnEditCar){
+        if (v == btnEditCar) {
             sendCar();
+        }
+        if (v == btnAddPhoto) {
+            Intent intent = new Intent(getContext(), ImagePickerActivity.class);
+
+            intent.putExtra(ImagePickerActivity.INTENT_EXTRA_FOLDER_MODE, true);
+            intent.putExtra(ImagePickerActivity.INTENT_EXTRA_MODE, ImagePickerActivity.MODE_SINGLE);
+            //intent.putExtra(ImagePickerActivity.INTENT_EXTRA_LIMIT, 1);
+            intent.putExtra(ImagePickerActivity.INTENT_EXTRA_SHOW_CAMERA, true);
+            intent.putExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES, images);
+            intent.putExtra(ImagePickerActivity.INTENT_EXTRA_FOLDER_TITLE, "อัลบั้ม");
+            intent.putExtra(ImagePickerActivity.INTENT_EXTRA_IMAGE_TITLE, "เลือกรูปภาพ");
+            intent.putExtra(ImagePickerActivity.INTENT_EXTRA_IMAGE_DIRECTORY, "กล้อง");
+            startActivityForResult(intent, REQUEST_CODE_PICKER);
         }
 
     }
-    public boolean confirmPassword(String password , String confirm) {
-        if (password.equals(confirm)) return true ;
-        return false ;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_PICKER && resultCode == RESULT_OK && data != null) {
+            images = data.getParcelableArrayListExtra(ImagePickerActivity.INTENT_EXTRA_SELECTED_IMAGES);
+            StringBuilder sb = new StringBuilder();
+
+            sb.append(images.get(0).getPath());
+            try {
+                bitmap = ImageLoader.init().from(sb.toString()).requestSize(1024, 1024).getBitmap();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Log.e("bitmap", "can't bitmap");
+                Log.e("bitmap", e.toString());
+            }
+            Glide.with(getContext())
+                    .load(images.get(0).getPath())
+                    .into(imgPhoto);
+
+            String encoded = ImageBase64.encode(bitmap);
+
+            Log.e("bitmap", bitmap.toString());
+            Log.e("base", encoded);
+            Log.e("name ", sb.toString());
+        }
+
     }
 
-    private void send(String password,String passwordNew) {
+    public boolean confirmPassword(String password, String confirm) {
+        if (password.equals(confirm)) return true;
+        return false;
+    }
+
+    private void send(String password, String passwordNew) {
         int id = dao.getUser().get(0).getUserId();
         String name = editTextName.getText().toString();
         String tel = editTextTel.getText().toString();

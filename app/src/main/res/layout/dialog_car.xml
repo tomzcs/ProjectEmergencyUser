@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,7 +10,8 @@
         android:layout_height="wrap_content"
         android:background="#ff3eaff9"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -29,159 +31,168 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16sp">
-
-        <EditText
-            android:id="@+id/edtCarType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="ประเภทรถ"
-            android:inputType="text"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvCarType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ประเภทรถ"
-            android:visibility="visible" />
-
-        <Spinner
-            android:id="@+id/spCarType"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible" />
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btnExit"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/edtCarType"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:background="#0000"
-                android:text="ข้าม"
-                android:textColor="#D50000"
-                android:visibility="visible" />
+                android:hint="ประเภทรถ"
+                android:inputType="text"
+                android:visibility="gone" />
 
-            <Button
-                android:id="@+id/btnNextName"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:background="#0000"
-                android:text="ต่อไป"
-                android:textColor="#D50000"
-                android:visibility="visible" />
+                fancy:cardElevation="2dp"
+                fancy:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16sp">
+
+                    <TextView
+                        android:id="@+id/tvCarType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ประเภทรถ"
+                        android:textColor="@android:color/background_dark"
+                        android:visibility="visible" />
+
+                    <Spinner
+                        android:id="@+id/spCarType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/tvCarName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ยี่ห้อรถ"
+                        android:textColor="@android:color/background_dark"
+                        android:visibility="gone" />
+
+                    <Spinner
+                        android:id="@+id/spCarName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvCarColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="สีรถ"
+                        android:textColor="@android:color/background_dark"
+                        android:visibility="gone" />
+
+                    <Spinner
+                        android:layout_marginBottom="10dp"
+                        android:id="@+id/spCarColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+
+                    <TextView
+                        android:id="@+id/tvCarNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ป้ายทะเบียน"
+                        android:textColor="@android:color/background_dark"
+                        android:visibility="gone" />
+
+                    <EditText
+                        android:id="@+id/edtCarNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:inputType="text"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+
+            </android.support.v7.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnExit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:background="#0000"
+                    android:text="ข้าม"
+                    android:textColor="#D50000"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btnNextName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:background="#0000"
+                    android:text="ต่อไป"
+                    android:textColor="#D50000"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btnBackType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#0000"
+                    android:text="ย้อนกลับ"
+                    android:textColor="#D50000"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btnNextColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#0000"
+                    android:text="ต่อไป"
+                    android:textColor="#D50000"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btnBackName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#0000"
+                    android:text="ย้อนกลับ"
+                    android:textColor="#D50000"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/btnSuccess"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#0000"
+                    android:text="เสร็จสิ้น"
+                    android:textColor="#D50000"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+
         </LinearLayout>
 
-
-        <TextView
-            android:id="@+id/tvCarName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ยี่ห้อรถ"
-            android:visibility="gone" />
-
-        <Spinner
-            android:id="@+id/spCarName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnBackType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#0000"
-                android:text="ย้อนกลับ"
-                android:textColor="#D50000"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/btnNextColor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#0000"
-                android:text="ต่อไป"
-                android:textColor="#D50000"
-                android:visibility="gone" />
-
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvCarColor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="สีรถ"
-            android:visibility="gone" />
-
-        <Spinner
-            android:id="@+id/spCarColor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-
-        <TextView
-            android:id="@+id/tvCarNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ป้ายทะเบียน"
-            android:visibility="gone" />
-
-        <EditText
-            android:id="@+id/edtCarNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:inputType="text"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnBackName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#0000"
-                android:text="ย้อนกลับ"
-                android:textColor="#D50000"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/btnSuccess"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="#0000"
-                android:text="เสร็จสิ้น"
-                android:textColor="#D50000"
-                android:visibility="gone" />
-
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
+    </ScrollView>
 
 </LinearLayout>
+

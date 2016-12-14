@@ -55,6 +55,9 @@ public class UsersDao {
     @SerializedName("USER_TYPE_NAME")
     private String typeName;
 
+    @SerializedName("USER_FCM_ID")
+    private String userFcmId;
+
 
     public UsersDao() {
 
@@ -186,5 +189,13 @@ public class UsersDao {
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+
+    public String getUserFcmId() {
+        return userFcmId;
+    }
+
+    public void setUserFcmId(String userFcmId) {
+        this.userFcmId = userFcmId;
     }
 }

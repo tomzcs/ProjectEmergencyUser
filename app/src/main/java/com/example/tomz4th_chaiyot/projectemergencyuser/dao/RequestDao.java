@@ -29,7 +29,8 @@ public class RequestDao {
     private String userName;
     @SerializedName("REQUEST_CREATED_AT")
     private String RequestCreatedAt;
-
+    @SerializedName("SERVICE_NAME")
+    private String serviceName;
 
 
     public RequestDao() {
@@ -122,5 +123,13 @@ public class RequestDao {
 
     public void setRequestCreatedAt(String requestCreatedAt) {
         RequestCreatedAt = requestCreatedAt;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 }

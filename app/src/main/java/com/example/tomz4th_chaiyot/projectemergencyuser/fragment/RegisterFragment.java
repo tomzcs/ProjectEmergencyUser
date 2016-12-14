@@ -80,7 +80,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         btnRegister = (Button) rootView.findViewById(R.id.btnRegister);
 
         btnRegister.setOnClickListener(this);
-        editTextPassword.setOnClickListener(this);
+        editTextPasswordConfirm.setOnClickListener(this);
 
 
     }
@@ -117,7 +117,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (v == btnRegister || v == editTextPassword) {
+        if (v == btnRegister || v == editTextPasswordConfirm) {
             if (editTextPassword.getText().toString().length() == 0) {
                 editTextPassword.setError("กรุณากรอกข้อมูล รหัสผ่าน!");
             }

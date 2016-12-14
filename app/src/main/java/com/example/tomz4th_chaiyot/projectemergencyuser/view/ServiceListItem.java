@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.widget.TextView;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.inthecheesefactory.thecheeselibrary.view.BaseCustomViewGroup;
@@ -14,6 +15,10 @@ import com.inthecheesefactory.thecheeselibrary.view.state.BundleSavedState;
  * Created by nuuneoi on 11/16/2014.
  */
 public class ServiceListItem extends BaseCustomViewGroup {
+
+    TextView tvName;
+    TextView tvDetail;
+    TextView tvAdd;
 
     public ServiceListItem(Context context) {
         super(context);
@@ -49,6 +54,9 @@ public class ServiceListItem extends BaseCustomViewGroup {
 
     private void initInstances() {
         // findViewById here
+        tvName = (TextView) findViewById(R.id.tvName);
+        tvDetail = (TextView) findViewById(R.id.tvDetail);
+        tvAdd = (TextView) findViewById(R.id.tvAdd);
     }
 
     private void initWithAttrs(AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -87,15 +95,28 @@ public class ServiceListItem extends BaseCustomViewGroup {
         // Restore State from bundle here
     }
 
-    @Override
+    /*@Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = width * 2/3;
+        int height = width * 2 / 3;
         int newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
                 height,
                 MeasureSpec.EXACTLY
         );
         super.onMeasure(widthMeasureSpec, newHeightMeasureSpec);
-        setMeasuredDimension(width,height);
+        setMeasuredDimension(width, height);
+    }*/
+
+    public void setTvName(String text) {
+        tvName.setText(text);
     }
+
+    public void setTvDetail(String text) {
+        tvDetail.setText(text);
+    }
+
+    public void setTvAdd(String text) {
+        tvAdd.setText(text);
+    }
+
 }

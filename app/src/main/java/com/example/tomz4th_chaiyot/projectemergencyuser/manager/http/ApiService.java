@@ -4,8 +4,10 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarColorCollectionDa
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarNameCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarTypeCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CommentCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestCollectionDao;
-import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UserSendNotification;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 
 import retrofit2.Call;
@@ -82,5 +84,55 @@ public interface ApiService {
     @GET("user/getCarColor")
     Call<CarColorCollectionDao> getCarColor();
 
+    @GET("user/getServiceAll")
+    Call<ServiceCollectionDao> getServiceAll();
+
+    @GET("user/getServiceId/{id}")
+    Call<ServiceCollectionDao> getService(@Path("id") int serviceId);
+
+    @GET("user/getComment/{id}")
+    Call<CommentCollectionDao> getComment(@Path("id") int serviceId);
+
+    @FormUrlEncoded
+    @POST("user/updateFcmId")
+    Call<UsersCollectionDao> updateFcmId(@Field("USER_FCM_ID") String userFcmId,
+                                         @Field("USER_ID") int userId
+
+    );
+
+    @FormUrlEncoded
+    @POST("user/notification/{id}")
+    Call<UserSendNotification> notification(
+            @Path("id") int serviceId,
+            @Field("title") String title,
+            @Field("body") String body
+
+    );
+
+    @FormUrlEncoded
+    @POST("user/updateservicestatus")
+    Call<ServiceCollectionDao> updateservicestatus(
+            @Field("SERVICE_ID") int serviceId,
+            @Field("SERVICE_STATUS") int serviceStatus
+    );
+
+    @GET("user/getRequestAddComment/{id}")
+    Call<RequestCollectionDao> getRequestAddComment(@Path("id") int userId);
+
+    @FormUrlEncoded
+    @POST("user/insertComment")
+    Call<CommentCollectionDao> insertComment(
+            @Field("COMMENT_DETAIL") String complaintDetail,
+            @Field("USER_ID") int userId,
+            @Field("USER_ID_SERVICE") int serviceId
+
+    );
+
+    @FormUrlEncoded
+    @POST("user/updateStatusRequest")
+    Call<RequestCollectionDao> updateStatusRequest(@Field("REQUEST_ID") int id,
+                                                   @Field("STATUS_ID") int name
+
+    );
 
 }

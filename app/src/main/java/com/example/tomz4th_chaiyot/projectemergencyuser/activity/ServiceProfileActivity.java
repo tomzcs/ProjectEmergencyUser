@@ -1,5 +1,6 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -11,11 +12,19 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceCommentFragment;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceProfileFragment;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ServiceProfileActivity extends AppCompatActivity {
@@ -26,13 +35,20 @@ public class ServiceProfileActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private boolean isShow = true;
     private int scrollRange = -1;
+    private String getId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_service_profile);
+
+        Bundle bundle = getIntent().getExtras();
+        getId = bundle.getString("id","0");
+
         initInstances();
+
+
     }
 
     private void initInstances() {
@@ -57,25 +73,33 @@ public class ServiceProfileActivity extends AppCompatActivity {
        // appBarLayout.addOnOffsetChangedListener(this);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
-        collapsingToolbarLayout.setTitle("ข้อมูลร้านผู้ให้บริการ");
+
+        int id = Integer.parseInt(getId);
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getService(id);
+        call.enqueue(new Callback<ServiceCollectionDao>() {
+            @Override
+            public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    ServiceCollectionDao daoService = response.body();
+
+                    if (daoService.isSuccess()) {
+                        collapsingToolbarLayout.setTitle(""+daoService.getService().get(0).getServiceName());
+                    }
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServiceCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+
+            }
+        });
+
     }
-
-    /*@Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
-
-        if (scrollRange == -1) {
-            scrollRange = appBarLayout.getTotalScrollRange();
-        }
-        if (scrollRange + verticalOffset == 0) {
-            collapsingToolbarLayout.setTitle("ข้อมูลผู้ให้บริการ");
-            isShow = true;
-        } else if (isShow) {
-            collapsingToolbarLayout.setTitle(" ");
-            isShow = false;
-        }
-
-    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -99,9 +123,9 @@ public class ServiceProfileActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
 
             if (position == 0) {
-                return ServiceProfileFragment.newInstance();
+                return ServiceProfileFragment.newInstance(getId);
             }
-            return ServiceCommentFragment.newInstance();
+            return ServiceCommentFragment.newInstance(getId);
         }
 
         @Override

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -19,9 +20,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +38,8 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarColorCollectionDa
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarNameCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarTypeCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CommentCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.RequestFragment;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceListFragment;
@@ -42,6 +47,7 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HistoryListManag
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.carManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.userManager;
+import com.example.tomz4th_chaiyot.projectemergencyuser.notification.UserUpdateFcmManager;
 
 import java.util.ArrayList;
 
@@ -64,10 +70,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView tvTel;
     private boolean doubleBackToExitPressedOnce;
     private NavigationView navigationView;
-    private EditText carType;
-    private EditText carName;
-    private EditText carColor;
-    private EditText carNumber;
     private int userId = 0;
     CarsCollectionDao daocar;
     carManager car;
@@ -88,6 +90,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return;
         }
         setContentView(R.layout.activity_main);
+        UserUpdateFcmManager fcmManager = new UserUpdateFcmManager(MainActivity.this);
+        if (fcmManager.getFcmToken() != null) {
+            Log.e("MainActivity", "Token ID=" + fcmManager.getFcmToken());
+
+            Call<UsersCollectionDao> call = HttpManager.getInstance().getService().updateFcmId(fcmManager.getFcmToken(), dao.getUser().get(0).getUserId());
+            call.enqueue(new Callback<UsersCollectionDao>() {
+                @Override
+                public void onResponse(Call<UsersCollectionDao> call, Response<UsersCollectionDao> response) {
+
+                    if (response.isSuccessful()) {
+                        UsersCollectionDao data = response.body();
+                        int id = data.getUser().get(0).getUserId();
+                        String message = data.getMessage();
+                        if (data.isSuccess()) {
+
+                        } else {
+
+                        }
+                    } else {
+                        Log.e("Error", response.errorBody().toString());
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UsersCollectionDao> call, Throwable t) {
+                    Log.e("errorConnection", t.toString());
+
+                }
+            });
+        }
+        getRequestComment();
 
         initInstances();
 
@@ -119,15 +153,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         View headerLayout = navigationView.getHeaderView(0);
-
         tvName = (TextView) headerLayout.findViewById(R.id.tvName);
         tvEmail = (TextView) headerLayout.findViewById(R.id.tvEmail);
         tvTel = (TextView) headerLayout.findViewById(R.id.tvTel);
         tvName.setText("ชื่อ :" + dao.getUser().get(0).getName());
         tvEmail.setText("อีเมล์ :" + dao.getUser().get(0).getEmail());
-        tvTel.setText("เบอร์โทร :" + dao.getUser().get(0).getTel());
+        tvTel.setText("ประเภท :" + dao.getUser().get(0).getTypeName());
 
         getCars();
 
@@ -211,17 +243,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this, HistoryActivity.class));
 
         } else if (id == R.id.nav_logout) {
-            user.logOut();
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(MainActivity.this);
+
+            builder.setTitle("ต้องการต้องการออกระบบ ?");
+
+            builder.setPositiveButton("ใช่", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    user.logOut();
+                    Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+            });
+
+            builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            builder.show();
         }
         return true;
     }
 
-    private void send(String type,String name,String color,String number ) {
+    private void send(String type, String name, String color, String number) {
         userId = dao.getUser().get(0).getUserId();
 
         Call<CarsCollectionDao> call = HttpManager.getInstance().getService().insertCar(type, name, color, number, userId);
@@ -339,10 +390,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             final Dialog dialog = new Dialog(MainActivity.this);
                             dialog.setContentView(R.layout.dialog_car);
 
+                            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                            lp.copyFrom(dialog.getWindow().getAttributes());
+                            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                            dialog.getWindow().setAttributes(lp);
+
                             //Spinner
                             final Spinner spCarType = (Spinner) dialog.findViewById(R.id.spCarType);
                             spTextCarType.clear();
-                            spCarType.setAdapter(new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_dropdown_item_1line,spTextCarType));
+                            spCarType.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_dropdown_item_1line, spTextCarType));
                             createCarType();
                             ArrayAdapter<String> adapterCarType = new ArrayAdapter<String>(getBaseContext(),
                                     R.layout.support_simple_spinner_dropdown_item, spTextCarType);
@@ -380,7 +436,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         btnExit.setVisibility(View.GONE);
 
                                         spTextCarName.clear();
-                                        spCarName.setAdapter(new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_dropdown_item_1line,spTextCarName));
+                                        spCarName.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_dropdown_item_1line, spTextCarName));
                                         createCarName(id);
                                         ArrayAdapter<String> adapterCarName = new ArrayAdapter<String>(getBaseContext(),
                                                 R.layout.support_simple_spinner_dropdown_item, spTextCarName);
@@ -471,11 +527,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     String text = spCarColor.getSelectedItem().toString().substring(0, 1);
                                     if (text.equals("ก")) {
                                         showToast("กรุณาเลือกสีรถ");
-                                    }else
-                                    if(ediCarNumber.getText().length() == 0){
+                                    } else if (ediCarNumber.getText().length() == 0) {
                                         ediCarNumber.setError("กรุณากรอกข้อมูลป้ายทะเบียน");
-                                    }
-                                    else{
+                                    } else {
                                         String type = spCarType.getSelectedItem().toString().substring(2);
                                         String name = spCarName.getSelectedItem().toString().substring(2);
                                         String color = spCarColor.getSelectedItem().toString().substring(2);
@@ -552,8 +606,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (daoCarName.isSuccess()) {
                         int numRows = daoCarName.getNumRows();
                         for (int i = 0; i < numRows; i++) {
-                            int no = i+1;
-                            spTextCarName.add(""+ no + "." + daoCarName.getCarName().get(i).getCarNameName());
+                            int no = i + 1;
+                            spTextCarName.add("" + no + "." + daoCarName.getCarName().get(i).getCarNameName());
                         }
                     }
 
@@ -572,6 +626,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         spTextCarName.add("กรุณาเลือกยี่ห้อ/รุ่น รถ");
     }
+
     private void createCarColor() {
         Call<CarColorCollectionDao> call = HttpManager.getInstance().getService().getCarColor();
         call.enqueue(new Callback<CarColorCollectionDao>() {
@@ -584,7 +639,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (daoCarColor.isSuccess()) {
                         int numRows = daoCarColor.getNumRows();
                         for (int i = 0; i < numRows; i++) {
-                            int no = i+1;
+                            int no = i + 1;
                             spTextCarColor.add("" + no + "." + daoCarColor.getCarColor().get(i).getCarColorName());
                         }
                     }
@@ -606,6 +661,98 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void showToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
+    private void getRequestComment() {
+
+        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().getRequestAddComment(dao.getUser().get(0).getUserId());
+        call.enqueue(new Callback<RequestCollectionDao>() {
+            @Override
+            public void onResponse(Call<RequestCollectionDao> call, Response<RequestCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    RequestCollectionDao data = response.body();
+
+                    if (data.isSuccess()) {
+                        final int idService = data.getRequest().get(0).getUserIdService();
+                        final int idRequest = data.getRequest().get(0).getRequestId();
+
+                        final Dialog dialog = new Dialog(MainActivity.this);
+                        dialog.setContentView(R.layout.dialog_comment);
+
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                        dialog.getWindow().setAttributes(lp);
+
+                        final EditText edtComment = (EditText) dialog.findViewById(R.id.edtComment);
+
+                        Button btnComment = (Button) dialog.findViewById(R.id.btnComment);
+                        btnComment.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                sendComment(edtComment.getText().toString(), idService);
+                                UpdateRequestStatus(idRequest, 3);
+                                dialog.dismiss();
+
+                            }
+                        });
+                        dialog.show();
+                    } else {
+                        Log.e("data","Okay");
+                    }
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+
+            }
+
+        });
+    }
+
+    private void sendComment(String text, int serviceId) {
+        Call<CommentCollectionDao> call = HttpManager.getInstance().getService().insertComment(text, dao.getUser().get(0).getUserId(), serviceId);
+        call.enqueue(new Callback<CommentCollectionDao>() {
+            @Override
+            public void onResponse(Call<CommentCollectionDao> call, Response<CommentCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    showToast("เพิ่มความคิดเห็นเรียบร้อยแล้ว");
+
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommentCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+
+            }
+
+        });
+    }
+
+    private void UpdateRequestStatus(int requestId, int statusId) {
+        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().updateStatusRequest(requestId, statusId);
+        call.enqueue(new Callback<RequestCollectionDao>() {
+            @Override
+            public void onResponse(Call<RequestCollectionDao> call, Response<RequestCollectionDao> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<RequestCollectionDao> call, Throwable t) {
+
+            }
+        });
     }
 
 

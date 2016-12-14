@@ -1,6 +1,7 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.fragment;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -10,23 +11,38 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.activity.MainActivity;
+import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.CommentsListAdapter;
+import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.ServiceListAdapter;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarColorCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarNameCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarTypeCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CommentCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UserSendNotification;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.ServiceListManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.userManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -47,6 +63,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class RequestFragment extends Fragment implements
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -60,20 +77,33 @@ public class RequestFragment extends Fragment implements
     private double longitude = 0;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     EditText editTextRequestDetail;
-    EditText editTextRequestDetailCar;
-    EditText edtUserIdService;
+    TextView editTextRequestDetailCar;
+    TextView edtUserIdService;
     EditText edtLat;
     EditText edtLon;
+    EditText edtServiceId;
     Spinner spRequestDetail;
     private ArrayList<String> text = new ArrayList<String>();
     ImageView btnPlus;
     Button btnSendRequest;
-    ImageView btnClear;
+    ImageView btnAddCar;
     ImageView btnDelete;
+    ImageView btnDown;
+    android.support.design.widget.FloatingActionButton btnOpenRequest;
+    ImageView btnAddService;
+    android.support.v7.widget.CardView cardView;
     private UsersCollectionDao dao;
     private RequestCollectionDao daoRequest;
     private userManager user;
-
+    private ArrayList<String> spTextCarType = new ArrayList<String>();
+    private ArrayList<String> spTextCarName = new ArrayList<String>();
+    private ArrayList<String> spTextCarColor = new ArrayList<String>();
+    ListView listView;
+    ServiceListAdapter listAdapter;
+    ServiceCollectionDao daoService;
+    Dialog dialog;
+    RecyclerView recyclerView;
+    CommentsListAdapter listAdapterComment;
 
     public RequestFragment() {
         super();
@@ -117,6 +147,8 @@ public class RequestFragment extends Fragment implements
                 .addConnectionCallbacks(this) // alt+enter ออกมา เลือกอันที่ 2 คำว่า make
                 .addOnConnectionFailedListener(this) //alt+enter ออกมา เลือกอันที่ 2 คำว่า make
                 .build();
+
+        listAdapterComment = new CommentsListAdapter(getContext());
     }
 
     private void initInstances(View rootView, Bundle savedInstanceState) {
@@ -127,9 +159,10 @@ public class RequestFragment extends Fragment implements
         mapFragment.getMapAsync(this);
 
         editTextRequestDetail = (EditText) rootView.findViewById(R.id.editTextRequestDetail);
+        edtServiceId = (EditText) rootView.findViewById(R.id.edtServiceId);
 
-        editTextRequestDetailCar = (EditText) rootView.findViewById(R.id.editTextRequestDetailCar);
-        edtUserIdService = (EditText) rootView.findViewById(R.id.edtUserIdService);
+        editTextRequestDetailCar = (TextView) rootView.findViewById(R.id.editTextRequestDetailCar);
+        edtUserIdService = (TextView) rootView.findViewById(R.id.edtUserIdService);
         edtLat = (EditText) rootView.findViewById(R.id.edtLat);
         edtLon = (EditText) rootView.findViewById(R.id.edtLon);
         btnSendRequest = (Button) rootView.findViewById(R.id.btnSendRequest);
@@ -147,10 +180,18 @@ public class RequestFragment extends Fragment implements
 
         btnPlus = (ImageView) rootView.findViewById(R.id.btn_plus);
         btnPlus.setOnClickListener(this);
-        btnClear = (ImageView) rootView.findViewById(R.id.btn_clear);
-        btnClear.setOnClickListener(this);
+        btnAddCar = (ImageView) rootView.findViewById(R.id.btn_add_car);
+        btnAddCar.setOnClickListener(this);
         btnDelete = (ImageView) rootView.findViewById(R.id.btn_delete);
         btnDelete.setOnClickListener(this);
+        btnDown = (ImageView) rootView.findViewById(R.id.btnDown);
+        btnDown.setOnClickListener(this);
+        btnOpenRequest = (android.support.design.widget.FloatingActionButton) rootView.findViewById(R.id.btnOpenRequest);
+        btnOpenRequest.setOnClickListener(this);
+        btnAddService = (ImageView) rootView.findViewById(R.id.btn_add_service);
+        btnAddService.setOnClickListener(this);
+
+        cardView = (android.support.v7.widget.CardView) rootView.findViewById(R.id.cardView);
 
     }
 
@@ -233,8 +274,7 @@ public class RequestFragment extends Fragment implements
         LocationAvailability locationAvailability = LocationServices.FusedLocationApi.getLocationAvailability(googleApiClient);
         if (locationAvailability.isLocationAvailable()) {
             LocationRequest locationRequest = new LocationRequest()
-                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(5000);
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
             LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         } else {
             // Do something when location provider not available
@@ -282,14 +322,41 @@ public class RequestFragment extends Fragment implements
             btnPlus.setVisibility(View.GONE);
             btnDelete.setVisibility(View.VISIBLE);
         }
-        if (v == btnClear) {
-            editTextRequestDetailCar.setText("");
+        if (v == btnAddCar) {
+            dialogCar();
+
+        }
+        if (v == btnAddService) {
+            dialogService();
         }
         if (v == btnSendRequest) {
             if (editTextRequestDetailCar.getText().toString().length() == 0) {
-                editTextRequestDetailCar.setError("กรุณากรอกข้อมูลลักษณะรถของคุณ!");
+                showToast("กรุณาระบุลักษณะรถของคุณ!");
+            } else if (edtUserIdService.getText().toString().length() == 0) {
+                showToast("กรุณาเลือกร้านให้บริการ!");
             } else {
-                sendRequest();
+                AlertDialog.Builder builder =
+                        new AlertDialog.Builder(getContext());
+
+                builder.setTitle("ต้องการส่งคำร้องขอ ?");
+
+                builder.setPositiveButton("ใช่", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendRequest();
+                        updateStatusService();
+                    }
+                });
+
+                builder.setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                builder.show();
+
             }
         }
         if (v == btnDelete) {
@@ -298,6 +365,15 @@ public class RequestFragment extends Fragment implements
             btnPlus.setVisibility(View.VISIBLE);
             btnDelete.setVisibility(View.GONE);
 
+        }
+        if (v == btnDown) {
+            cardView.setVisibility(View.GONE);
+            btnOpenRequest.setVisibility(View.VISIBLE);
+        }
+        if (v == btnOpenRequest) {
+            getUsersShow();
+            cardView.setVisibility(View.VISIBLE);
+            btnOpenRequest.setVisibility(View.GONE);
         }
     }
 
@@ -364,7 +440,7 @@ public class RequestFragment extends Fragment implements
 
                         tvRequestDetail.setText("" + daoRequestUser.getRequest().get(0).getRequestDetail());
                         tvRequestDetailCar.setText("" + daoRequestUser.getRequest().get(0).getRequestDetailCar());
-                        tvUserIdService.setText("" + daoRequestUser.getRequest().get(0).getUserName());
+                        tvUserIdService.setText("" + daoRequestUser.getRequest().get(0).getServiceName());
                         tvDate.setText("" + daoRequestUser.getRequest().get(0).getRequestCreatedAt());
                         tvStatus.setText("" + daoRequestUser.getRequest().get(0).getStatusName());
 
@@ -394,6 +470,24 @@ public class RequestFragment extends Fragment implements
         });
     }
 
+    private void updateStatusService() {
+        String serviceId = edtServiceId.getText().toString();
+        int serviceIdd = Integer.parseInt(serviceId);
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().updateservicestatus(serviceIdd, 1);
+        call.enqueue(new Callback<ServiceCollectionDao>() {
+            @Override
+            public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
+
+
+            }
+
+            @Override
+            public void onFailure(Call<ServiceCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+            }
+        });
+    }
+
     private void sendRequest() {
         int idUser = dao.getUser().get(0).getUserId();
 
@@ -402,8 +496,10 @@ public class RequestFragment extends Fragment implements
         String requestDetailCar = editTextRequestDetailCar.getText().toString();
         String requestLat = edtLat.getText().toString();
         String requestLon = edtLon.getText().toString();
+        String serviceId = edtServiceId.getText().toString();
+        final int serviceIdd = Integer.parseInt(serviceId);
 
-        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().insertRequest(request + requestDetail, requestDetailCar, requestLat, requestLon, 1, idUser, 15);
+        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().insertRequest(request + requestDetail, requestDetailCar, requestLat, requestLon, 1, idUser, serviceIdd);
         call.enqueue(new Callback<RequestCollectionDao>() {
             @Override
             public void onResponse(Call<RequestCollectionDao> call, Response<RequestCollectionDao> response) {
@@ -412,10 +508,10 @@ public class RequestFragment extends Fragment implements
                     daoRequest = response.body();
                     String message = daoRequest.getMessage();
                     if (daoRequest.isSuccess()) {
-                        showToast(message);
                         getRequestUser();
+                        sendNotification();
                     } else {
-                        showToast(message);
+                        //showToast(message);
                     }
                 } else {
                     Log.e("Error", response.errorBody().toString());
@@ -431,7 +527,410 @@ public class RequestFragment extends Fragment implements
         });
     }
 
+    private void sendNotification() {
+        String serviceId = edtServiceId.getText().toString();
+        int serviceIdd = Integer.parseInt(serviceId);
+        String request = spRequestDetail.getSelectedItem().toString();
+        String requestDetail = "  " + editTextRequestDetail.getText().toString();
+        String requestDetailCar = editTextRequestDetailCar.getText().toString();
+
+        Call<UserSendNotification> call = HttpManager.getInstance().getService().notification(serviceIdd, request, requestDetail + requestDetailCar);
+        call.enqueue(new Callback<UserSendNotification>() {
+            @Override
+            public void onResponse(Call<UserSendNotification> call, Response<UserSendNotification> response) {
+                //showToast("notification success");
+            }
+
+            @Override
+            public void onFailure(Call<UserSendNotification> call, Throwable t) {
+                // showToast("notification not success");
+            }
+        });
+
+    }
+
     private void showToast(String text) {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
+    private void dialogCar() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_car);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.getWindow().setAttributes(lp);
+
+        //Spinner
+        final Spinner spCarType = (Spinner) dialog.findViewById(R.id.spCarType);
+        spTextCarType.clear();
+        spCarType.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, spTextCarType));
+        createCarType();
+        ArrayAdapter<String> adapterCarType = new ArrayAdapter<String>(getContext(),
+                R.layout.support_simple_spinner_dropdown_item, spTextCarType);
+        spCarType.setAdapter(adapterCarType);
+
+        final Spinner spCarName = (Spinner) dialog.findViewById(R.id.spCarName);
+        final Spinner spCarColor = (Spinner) dialog.findViewById(R.id.spCarColor);
+
+        final TextView tvCarType = (TextView) dialog.findViewById(R.id.tvCarType);
+        final TextView tvCarName = (TextView) dialog.findViewById(R.id.tvCarName);
+        final TextView tvCarColor = (TextView) dialog.findViewById(R.id.tvCarColor);
+        final TextView tvCarNumber = (TextView) dialog.findViewById(R.id.tvCarNumber);
+
+        final EditText ediCarNumber = (EditText) dialog.findViewById(R.id.edtCarNumber);
+
+
+        final Button btnNextName = (Button) dialog.findViewById(R.id.btnNextName);
+        final Button btnExit = (Button) dialog.findViewById(R.id.btnExit);
+        final Button btnBackType = (Button) dialog.findViewById(R.id.btnBackType);
+        final Button btnNextColor = (Button) dialog.findViewById(R.id.btnNextColor);
+        final Button btnBackName = (Button) dialog.findViewById(R.id.btnBackName);
+        final Button btnSuccess = (Button) dialog.findViewById(R.id.btnSuccess);
+
+        btnNextName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = spCarType.getSelectedItem().toString().substring(0, 1);
+                if (text.equals("ก")) {
+                    showToast("กรุณาเลือกประเภทรถ");
+                } else {
+                    int id = Integer.parseInt(text);
+                    tvCarType.setVisibility(View.GONE);
+                    spCarType.setVisibility(View.GONE);
+                    btnNextName.setVisibility(View.GONE);
+                    btnExit.setVisibility(View.GONE);
+
+                    spTextCarName.clear();
+                    spCarName.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, spTextCarName));
+                    createCarName(id);
+                    ArrayAdapter<String> adapterCarName = new ArrayAdapter<String>(getContext(),
+                            R.layout.support_simple_spinner_dropdown_item, spTextCarName);
+                    spCarName.setAdapter(adapterCarName);
+
+                    tvCarName.setVisibility(View.VISIBLE);
+                    spCarName.setVisibility(View.VISIBLE);
+                    btnBackType.setVisibility(View.VISIBLE);
+                    btnNextColor.setVisibility(View.VISIBLE);
+
+                }
+            }
+        });
+
+        btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnBackType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvCarType.setVisibility(View.VISIBLE);
+                spCarType.setVisibility(View.VISIBLE);
+                btnNextName.setVisibility(View.VISIBLE);
+                btnExit.setVisibility(View.VISIBLE);
+
+                tvCarName.setVisibility(View.GONE);
+                spCarName.setVisibility(View.GONE);
+                btnBackType.setVisibility(View.GONE);
+                btnNextColor.setVisibility(View.GONE);
+            }
+        });
+
+        btnNextColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = spCarName.getSelectedItem().toString().substring(0, 1);
+                if (text.equals("ก")) {
+                    showToast("กรุณาเลือกยี่ห้อ/รุ่น รถ");
+                } else {
+                    tvCarName.setVisibility(View.GONE);
+                    spCarName.setVisibility(View.GONE);
+                    btnBackType.setVisibility(View.GONE);
+                    btnNextColor.setVisibility(View.GONE);
+
+
+                    spTextCarColor.clear();
+                    spCarColor.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, spTextCarColor));
+                    createCarColor();
+                    ArrayAdapter<String> adapterCarColor = new ArrayAdapter<String>(getContext(),
+                            R.layout.support_simple_spinner_dropdown_item, spTextCarColor);
+                    spCarColor.setAdapter(adapterCarColor);
+
+                    tvCarColor.setVisibility(View.VISIBLE);
+                    spCarColor.setVisibility(View.VISIBLE);
+                    tvCarNumber.setVisibility(View.VISIBLE);
+                    ediCarNumber.setVisibility(View.VISIBLE);
+                    btnBackName.setVisibility(View.VISIBLE);
+                    btnSuccess.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+
+        btnBackName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvCarColor.setVisibility(View.GONE);
+                spCarColor.setVisibility(View.GONE);
+                tvCarNumber.setVisibility(View.GONE);
+                ediCarNumber.setVisibility(View.GONE);
+                btnBackName.setVisibility(View.GONE);
+                btnSuccess.setVisibility(View.GONE);
+
+                tvCarName.setVisibility(View.VISIBLE);
+                spCarName.setVisibility(View.VISIBLE);
+                btnBackType.setVisibility(View.VISIBLE);
+                btnNextColor.setVisibility(View.VISIBLE);
+            }
+        });
+
+        btnSuccess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = spCarColor.getSelectedItem().toString().substring(0, 1);
+                if (text.equals("ก")) {
+                    showToast("กรุณาเลือกสีรถ");
+                } else if (ediCarNumber.getText().length() == 0) {
+                    ediCarNumber.setError("กรุณากรอกข้อมูลป้ายทะเบียน");
+                } else {
+                    String type = spCarType.getSelectedItem().toString().substring(2);
+                    String name = spCarName.getSelectedItem().toString().substring(2);
+                    String color = spCarColor.getSelectedItem().toString().substring(2);
+                    String number = ediCarNumber.getText().toString();
+                    //send(type, name, color, number);
+                    editTextRequestDetailCar.setText("" + type + "/" +
+                            name + "/" +
+                            color + "/" +
+                            number);
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void dialogService() {
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_service);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        dialog.getWindow().setAttributes(lp);
+
+        listView = (ListView) dialog.findViewById(R.id.listView);
+        listAdapter = new ServiceListAdapter();
+        listView.setAdapter(listAdapter);
+        listView.setOnItemClickListener(listViewItemClickListener);
+
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAll();
+        call.enqueue(new Callback<ServiceCollectionDao>() {
+            @Override
+            public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
+                if (response.isSuccessful()) {
+                    daoService = response.body();
+                    ServiceListManager.getInstance().setDao(daoService);
+                    listAdapter.notifyDataSetChanged();
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServiceCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    AdapterView.OnItemClickListener listViewItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+            //edtUserIdService.setText(daoService.getService().get(position).getServiceName() + "/" + daoService.getService().get(position).getServiceAdd());
+            // edtServiceId.setText(daoService.getService().get(position).getUserServiceId() + "");
+            final Dialog dialog1 = new Dialog(getContext());
+            dialog1.setContentView(R.layout.dialog_comment_list);
+
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(dialog1.getWindow().getAttributes());
+            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+            dialog1.getWindow().setAttributes(lp);
+
+            Button btnExit = (Button) dialog1.findViewById(R.id.btnExit);
+            Button btnSelect = (Button) dialog1.findViewById(R.id.btnSelect);
+            TextView tvNotData = (TextView) dialog1.findViewById(R.id.tv_not_data);
+            btnExit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog1.dismiss();
+                    listAdapterComment.setDataComment(null);
+                    listAdapterComment.notifyDataSetChanged();
+                }
+            });
+            btnSelect.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    edtUserIdService.setText(daoService.getService().get(position).getServiceName() + "/" + daoService.getService().get(position).getServiceAdd());
+                    edtServiceId.setText(daoService.getService().get(position).getUserServiceId() + "");
+                    dialog1.dismiss();
+                    dialog.dismiss();
+                }
+            });
+
+            recyclerView = (RecyclerView) dialog1.findViewById(R.id.recyclerView);
+            listAdapterComment.setDataComment(null);
+            listAdapterComment.notifyDataSetChanged();
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(listAdapterComment);
+            listAdapterComment.notifyDataSetChanged();
+            int idservice = daoService.getService().get(position).getUserServiceId();
+            Log.e("idservice", idservice + "");
+            Log.e("popsition", position + "");
+
+            loadData(idservice, tvNotData);
+            dialog1.show();
+
+
+        }
+    };
+
+    private void createCarType() {
+        Call<CarTypeCollectionDao> call = HttpManager.getInstance().getService().getCarType();
+        call.enqueue(new Callback<CarTypeCollectionDao>() {
+            @Override
+            public void onResponse(Call<CarTypeCollectionDao> call, Response<CarTypeCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    CarTypeCollectionDao daoCarType;
+                    daoCarType = response.body();
+                    if (daoCarType.isSuccess()) {
+                        int numRows = daoCarType.getNumRows();
+                        for (int i = 0; i < numRows; i++) {
+                            spTextCarType.add("" + daoCarType.getCarType().get(i).getCarTypeId() + "." + daoCarType.getCarType().get(i).getCarTypeName());
+                        }
+                    }
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CarTypeCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
+
+            }
+
+        });
+        spTextCarType.add("กรุณาเลือกประเภทรถ");
+    }
+
+    private void createCarName(int id) {
+        Call<CarNameCollectionDao> call = HttpManager.getInstance().getService().getCarName(id);
+        call.enqueue(new Callback<CarNameCollectionDao>() {
+            @Override
+            public void onResponse(Call<CarNameCollectionDao> call, Response<CarNameCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    CarNameCollectionDao daoCarName;
+                    daoCarName = response.body();
+
+                    if (daoCarName.isSuccess()) {
+                        int numRows = daoCarName.getNumRows();
+                        for (int i = 0; i < numRows; i++) {
+                            int no = i + 1;
+                            spTextCarName.add("" + no + "." + daoCarName.getCarName().get(i).getCarNameName());
+                        }
+                    }
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CarNameCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
+
+            }
+
+        });
+        spTextCarName.add("กรุณาเลือกยี่ห้อ/รุ่น รถ");
+    }
+
+    private void createCarColor() {
+        Call<CarColorCollectionDao> call = HttpManager.getInstance().getService().getCarColor();
+        call.enqueue(new Callback<CarColorCollectionDao>() {
+            @Override
+            public void onResponse(Call<CarColorCollectionDao> call, Response<CarColorCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    CarColorCollectionDao daoCarColor;
+                    daoCarColor = response.body();
+                    if (daoCarColor.isSuccess()) {
+                        int numRows = daoCarColor.getNumRows();
+                        for (int i = 0; i < numRows; i++) {
+                            int no = i + 1;
+                            spTextCarColor.add("" + no + "." + daoCarColor.getCarColor().get(i).getCarColorName());
+                        }
+                    }
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CarColorCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
+
+            }
+
+        });
+        spTextCarColor.add("กรุณาเลือกสีรถ");
+    }
+
+
+    public void loadData(final int id, final TextView tvNotData) {
+        Call<CommentCollectionDao> call = HttpManager.getInstance().getService().getComment(id);
+        call.enqueue(new Callback<CommentCollectionDao>() {
+            @Override
+            public void onResponse(Call<CommentCollectionDao> call, Response<CommentCollectionDao> response) {
+                if (response.isSuccessful()) {
+                    CommentCollectionDao dataComment = response.body();
+
+                    if (dataComment.getComment() != null) {
+                        Log.e("id toat1", id + "");
+                        listAdapterComment.setDataComment(dataComment);
+                        listAdapterComment.notifyDataSetChanged();
+                    } else {
+                        Log.e("id toat2", id + "");
+                        tvNotData.setVisibility(View.VISIBLE);
+                    }
+
+                } else {
+                    tvNotData.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommentCollectionDao> call, Throwable t) {
+                tvNotData.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }

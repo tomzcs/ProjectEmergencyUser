@@ -29,17 +29,28 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
     compile project(':TheCheeseLibrary')
-
     compile 'com.android.support:support-v4:24.1.1'
     compile 'com.android.support:design:24.1.1'
+    //retrofit
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.google.android.gms:play-services-maps:9.6.1'
-    compile 'com.google.android.gms:play-services-location:9.6.1'
+    //map
+    compile 'com.google.android.gms:play-services-maps:10.0.1'
+    compile 'com.google.android.gms:play-services-location:10.0.1'
+    //cardView
     compile 'com.android.support:cardview-v7:24.2.1'
 
+    //crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
 
+    //NOTIFICATION
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
+
+    //Image
+    compile 'com.github.nguyenhoanglam:ImagePicker:1.1.3'
+    compile files('libs/PhotoUtil.jar')
+    compile files('libs/GenAsync.1.2.jar')
 }
+apply plugin: 'com.google.gms.google-services'

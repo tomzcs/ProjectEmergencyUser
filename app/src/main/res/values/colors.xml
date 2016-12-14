@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#1565C0</color>
+    <color name="colorPrimaryDark">#0D47A1</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimaryDark2">#1976D2</color>
+
+    <color name="colorTab">#5C6BC0</color>
     <color name="AE3600">#64B5F6</color>
     <color name="D65317">#2196F3</color>
+    <color name="FF5722">#FF5722</color>
+    <color name="BF360C">#BF360C</color>
+    <color name="G8BC34A">#8BC34A</color>
+    <color name="G558B2F">#558B2F</color>
     <color name="Overlay_color">#80000000</color>
 </resources>

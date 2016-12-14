@@ -6,8 +6,15 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:background="@drawable/bg" />
+        android:background="@drawable/bg"
+        android:scaleType="centerCrop" />
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    </android.support.v7.widget.CardView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,48 +24,95 @@
 
 
         <FrameLayout
-            android:padding="10dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="10dp">
 
             <ImageView
-                android:baselineAlignBottom="true"
-                android:padding="16dp"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:background="@drawable/logoadmin" />
+                android:background="@drawable/logoadmin"
+                android:baselineAlignBottom="true"
+                android:padding="16dp" />
 
         </FrameLayout>
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#80000000"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                style="@style/service_list_item"
-                android:text="ชื่อร้าน : ช.ช่าง" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#80000000"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                style="@style/service_list_item"
-                android:text="รายละเอียดร้าน : บริการซ่อมรถนอกสถานที่ 24 ชม. ทุกวัน" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-            <TextView
-                style="@style/service_list_item"
-                android:text="ระยะห่างจากคุณ : 500 เมตร." />
-        </LinearLayout>
+                    <TextView
+                        style="@style/service_list_item"
+                        android:layout_weight="1"
+                        android:text="ชื่อร้าน :" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="#9E9E9E" />
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_weight="2"
+                        style="@style/service_list_item"
+                        android:text="ชื่อร้าน : ช.ช่าง" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_weight="1"
+                        style="@style/service_list_item"
+                        android:text="รายละเอียด :" />
+
+                    <TextView
+                        android:layout_weight="2"
+                        android:id="@+id/tvDetail"
+                        style="@style/service_list_item"
+                        android:text="รายละเอียดร้าน" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/service_list_item"
+                        android:layout_weight="1"
+                        android:text="ที่อยู่ : " />
+
+                    <TextView
+                        android:id="@+id/tvAdd"
+                        android:layout_weight="2"
+                        style="@style/service_list_item"
+                        android:text="ที่อยู่ : " />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+
     </LinearLayout>
 
     <View
-        android:background="@drawable/selector_overlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@drawable/selector_overlay" />
 
 </RelativeLayout>

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,14 @@ import android.widget.Toast;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.activity.ServiceProfileActivity;
 import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.ServiceListAdapter;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarColorCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.ServiceListManager;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by nuuneoi on 11/16/2014.
@@ -22,6 +31,7 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
 
     ListView listView;
     ServiceListAdapter listAdapter;
+    ServiceCollectionDao daoService;
 
     public ServiceListFragment() {
         super();
@@ -63,7 +73,27 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
         listView = (ListView) rootView.findViewById(R.id.listView);
         listAdapter = new ServiceListAdapter();
         listView.setAdapter(listAdapter);
-        listView.setOnItemClickListener(this);
+        listView.setOnItemClickListener(listViewItemClickListener);
+
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAll();
+        call.enqueue(new Callback<ServiceCollectionDao>() {
+            @Override
+            public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
+                if (response.isSuccessful()) {
+                    daoService = response.body();
+                    ServiceListManager.getInstance().setDao(daoService);
+                    listAdapter.notifyDataSetChanged();
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServiceCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+            }
+        });
 
     }
 
@@ -101,4 +131,16 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         startActivity(new Intent(getContext(), ServiceProfileActivity.class));
     }
+
+    AdapterView.OnItemClickListener listViewItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            String serviceId = daoService.getService().get(position).getServiceId()+"";
+            Intent intent = new Intent(getContext(),ServiceProfileActivity.class);
+            intent.putExtra("id",serviceId);
+            startActivity(intent);
+
+        }
+    };
 }
