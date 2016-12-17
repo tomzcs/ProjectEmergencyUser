@@ -9,6 +9,10 @@
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_history"
             android:title="ประวัติการใช้บริการ" />
+        <item
+            android:id="@+id/nav_complaint"
+            android:icon="@drawable/ic_complain"
+            android:title="ประวัติการโดนร้องเรียน" />
 
     </group>
     <item android:title="เพิ่มเติม">

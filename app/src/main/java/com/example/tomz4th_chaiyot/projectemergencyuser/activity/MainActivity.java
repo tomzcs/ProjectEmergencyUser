@@ -121,7 +121,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
         }
-        getRequestComment();
+        getRequestComment(5);
+        getRequestSuccess(2);
 
         initInstances();
 
@@ -242,7 +243,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_history) {
             startActivity(new Intent(this, HistoryActivity.class));
 
-        } else if (id == R.id.nav_logout) {
+        }else if(id == R.id.nav_complaint){
+            startActivity(new Intent(this, ComplaintActivity.class));
+        }
+        else if (id == R.id.nav_logout) {
             AlertDialog.Builder builder =
                     new AlertDialog.Builder(MainActivity.this);
 
@@ -663,16 +667,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
 
-    private void getRequestComment() {
+    private void getRequestComment(int statusId) {
 
-        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().getRequestAddComment(dao.getUser().get(0).getUserId());
+        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().getRequestAddComment(dao.getUser().get(0).getUserId(), statusId);
         call.enqueue(new Callback<RequestCollectionDao>() {
             @Override
             public void onResponse(Call<RequestCollectionDao> call, Response<RequestCollectionDao> response) {
 
                 if (response.isSuccessful()) {
                     RequestCollectionDao data = response.body();
-
                     if (data.isSuccess()) {
                         final int idService = data.getRequest().get(0).getUserIdService();
                         final int idRequest = data.getRequest().get(0).getRequestId();
@@ -699,7 +702,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         });
                         dialog.show();
                     } else {
-                        Log.e("data","Okay");
+                        Log.e("data", "Okay");
+                    }
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+
+            }
+
+        });
+    }
+
+    private void getRequestSuccess(int statusId) {
+
+        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().getRequestAddComment(dao.getUser().get(0).getUserId(), statusId);
+        call.enqueue(new Callback<RequestCollectionDao>() {
+            @Override
+            public void onResponse(Call<RequestCollectionDao> call, Response<RequestCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    RequestCollectionDao data = response.body();
+                    if (data.isSuccess()) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("การร้องขอ")
+                                .setMessage("ร้านให้บริการรับเรื่องคุณแล้ว")
+                                .setPositiveButton("ปิด", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
+                    } else {
+                        Log.e("data", "Okay");
                     }
 
                 } else {

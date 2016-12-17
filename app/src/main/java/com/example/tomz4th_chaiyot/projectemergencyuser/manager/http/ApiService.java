@@ -5,6 +5,7 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarNameCollectionDao
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarTypeCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CommentCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ComplaintCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UserSendNotification;
@@ -116,8 +117,9 @@ public interface ApiService {
             @Field("SERVICE_STATUS") int serviceStatus
     );
 
-    @GET("user/getRequestAddComment/{id}")
-    Call<RequestCollectionDao> getRequestAddComment(@Path("id") int userId);
+    @FormUrlEncoded
+    @POST("user/getRequestAddComment/{id}")
+    Call<RequestCollectionDao> getRequestAddComment(@Path("id") int userId, @Field("STATUS_ID") int statusId);
 
     @FormUrlEncoded
     @POST("user/insertComment")
@@ -134,5 +136,8 @@ public interface ApiService {
                                                    @Field("STATUS_ID") int name
 
     );
+
+    @GET("user/getComplaint/{id}")
+    Call<ComplaintCollectionDao> getComplaint(@Path("id") int userId);
 
 }
