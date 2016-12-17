@@ -5,11 +5,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CommentCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ComplaintCollectionDao;
+
+import java.util.UUID;
+
+import static com.example.tomz4th_chaiyot.projectemergencyuser.BaseUrl.BASE_URL_IMG_USER;
 
 
 /**
@@ -23,6 +30,7 @@ public class ComplaintListAdapter extends RecyclerView.Adapter<ComplaintListAdap
     TextView tvName;
     TextView tvDate;
     TextView tvDetail;
+    ImageView imgPhoto;
 
     public ComplaintListAdapter(Context mContext) {
         this.mContext = mContext;
@@ -57,6 +65,10 @@ public class ComplaintListAdapter extends RecyclerView.Adapter<ComplaintListAdap
             tvName.setText(dataCommplaint.getComplaint().get(position).getServiceName());
             tvDate.setText(dataCommplaint.getComplaint().get(position).getCreatedAt());
             tvDetail.setText(dataCommplaint.getComplaint().get(position).getDetail());
+            Glide.with(mContext)
+                    .load(BASE_URL_IMG_USER + dataCommplaint.getComplaint().get(position).getUserImg())
+                    .signature(new StringSignature(UUID.randomUUID().toString()))
+                    .into(imgPhoto);
         }
 
     }
@@ -68,6 +80,7 @@ public class ComplaintListAdapter extends RecyclerView.Adapter<ComplaintListAdap
             tvName = (TextView) itemView.findViewById(R.id.tvName);
             tvDate = (TextView) itemView.findViewById(R.id.tvDate);
             tvDetail = (TextView) itemView.findViewById(R.id.tvDetail);
+            imgPhoto = (ImageView) itemView.findViewById(R.id.imgPhoto);
 
         }
     }
