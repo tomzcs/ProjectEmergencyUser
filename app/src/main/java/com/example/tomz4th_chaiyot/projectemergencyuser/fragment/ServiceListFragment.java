@@ -15,10 +15,12 @@ import android.widget.Toast;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.activity.ServiceProfileActivity;
 import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.ServiceListAdapter;
+import com.example.tomz4th_chaiyot.projectemergencyuser.adapter.ServiceListAllAdapter;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarColorCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.ServiceListManager;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.ServiceListsManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,7 +32,7 @@ import retrofit2.Response;
 public class ServiceListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     ListView listView;
-    ServiceListAdapter listAdapter;
+    ServiceListAllAdapter listAdapter;
     ServiceCollectionDao daoService;
 
     public ServiceListFragment() {
@@ -71,17 +73,17 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
         listView = (ListView) rootView.findViewById(R.id.listView);
-        listAdapter = new ServiceListAdapter();
+        listAdapter = new ServiceListAllAdapter();
         listView.setAdapter(listAdapter);
         listView.setOnItemClickListener(listViewItemClickListener);
 
-        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAll();
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAllShow();
         call.enqueue(new Callback<ServiceCollectionDao>() {
             @Override
             public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
                 if (response.isSuccessful()) {
                     daoService = response.body();
-                    ServiceListManager.getInstance().setDao(daoService);
+                    ServiceListsManager.getInstance().setDao(daoService);
                     listAdapter.notifyDataSetChanged();
 
                 } else {

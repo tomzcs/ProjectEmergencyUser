@@ -10,6 +10,7 @@ public class CommentDao {
     @SerializedName("COMMENT_ID") private int commentId;
     @SerializedName("COMMENT_DETAIL") private String commentDetail;
     @SerializedName("USER_ID") private int userId;
+    @SerializedName("USER_IMG") private String userImg;
     @SerializedName("USER_NAME") private String userName;
     @SerializedName("USER_ID_SERVICE") private int userServiceId;
     @SerializedName("COMMENT_CREATED_AT") private String commentCreatedAt;
@@ -62,5 +63,13 @@ public class CommentDao {
 
     public void setCommentCreatedAt(String commentCreatedAt) {
         this.commentCreatedAt = commentCreatedAt;
+    }
+
+    public String getUserImg() {
+        return userImg;
+    }
+
+    public void setUserImg(String userImg) {
+        this.userImg = userImg;
     }
 }

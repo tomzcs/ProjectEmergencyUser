@@ -88,6 +88,9 @@ public interface ApiService {
     @GET("user/getServiceAll")
     Call<ServiceCollectionDao> getServiceAll();
 
+    @GET("user/getServiceAllShow")
+    Call<ServiceCollectionDao> getServiceAllShow();
+
     @GET("user/getServiceId/{id}")
     Call<ServiceCollectionDao> getService(@Path("id") int serviceId);
 
@@ -139,5 +142,10 @@ public interface ApiService {
 
     @GET("user/getComplaint/{id}")
     Call<ComplaintCollectionDao> getComplaint(@Path("id") int userId);
+
+    @FormUrlEncoded
+    @POST("user/AddImgUser")
+    Call<UsersCollectionDao> AddImgUser(@Field("USER_ID") int userId,
+                                        @Field("ENCODE") String encode);
 
 }

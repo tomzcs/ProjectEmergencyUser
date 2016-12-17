@@ -6,25 +6,27 @@ import android.widget.BaseAdapter;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.ServiceListManager;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.ServiceListsManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.view.ServiceListItem;
+import com.example.tomz4th_chaiyot.projectemergencyuser.view.ServiceListItems;
 
 /**
  * Created by toMz4th-ChaiYot on 12/4/2016.
  */
 
-public class ServiceListAdapter extends BaseAdapter {
+public class ServiceListAllAdapter extends BaseAdapter {
     @Override
     public int getCount() {
-        if (ServiceListManager.getInstance().getDao() == null)
+        if (ServiceListsManager.getInstance().getDao() == null)
             return 0;
-        if (ServiceListManager.getInstance().getDao().getService() == null)
+        if (ServiceListsManager.getInstance().getDao().getService() == null)
             return 0;
-        return ServiceListManager.getInstance().getDao().getService().size();
+        return ServiceListsManager.getInstance().getDao().getService().size();
     }
 
     @Override
     public Object getItem(int position) {
-        return ServiceListManager.getInstance().getDao().getService().get(position);
+        return ServiceListsManager.getInstance().getDao().getService().get(position);
     }
 
     @Override
@@ -34,11 +36,11 @@ public class ServiceListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ServiceListItem item;
+        ServiceListItems item;
         if (convertView != null)
-            item = (ServiceListItem) convertView;
+            item = (ServiceListItems) convertView;
         else
-            item = new ServiceListItem(parent.getContext());
+            item = new ServiceListItems(parent.getContext());
 
         ServiceDao dao = (ServiceDao) getItem(position);
         item.setTvName(dao.getServiceName());

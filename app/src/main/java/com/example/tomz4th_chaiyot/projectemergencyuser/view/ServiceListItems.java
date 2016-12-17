@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.signature.StringSignature;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
-import com.example.tomz4th_chaiyot.projectemergencyuser.activity.MainActivity;
 import com.inthecheesefactory.thecheeselibrary.view.BaseCustomViewGroup;
 import com.inthecheesefactory.thecheeselibrary.view.state.BundleSavedState;
 
@@ -23,7 +22,7 @@ import static com.example.tomz4th_chaiyot.projectemergencyuser.BaseUrl.BASE_URL_
 /**
  * Created by nuuneoi on 11/16/2014.
  */
-public class ServiceListItem extends BaseCustomViewGroup {
+public class ServiceListItems extends BaseCustomViewGroup {
 
     TextView tvName;
     TextView tvDetail;
@@ -31,20 +30,20 @@ public class ServiceListItem extends BaseCustomViewGroup {
     ImageView imgPhoto;
     ImageView imgPhotoService;
 
-    public ServiceListItem(Context context) {
+    public ServiceListItems(Context context) {
         super(context);
         initInflate();
         initInstances();
     }
 
-    public ServiceListItem(Context context, AttributeSet attrs) {
+    public ServiceListItems(Context context, AttributeSet attrs) {
         super(context, attrs);
         initInflate();
         initInstances();
         initWithAttrs(attrs, 0, 0);
     }
 
-    public ServiceListItem(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ServiceListItems(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initInflate();
         initInstances();
@@ -52,7 +51,7 @@ public class ServiceListItem extends BaseCustomViewGroup {
     }
 
     @TargetApi(21)
-    public ServiceListItem(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ServiceListItems(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initInflate();
         initInstances();
@@ -60,7 +59,7 @@ public class ServiceListItem extends BaseCustomViewGroup {
     }
 
     private void initInflate() {
-        inflate(getContext(), R.layout.fragment_service_list_item, this);
+        inflate(getContext(), R.layout.fragment_service_list_items, this);
     }
 
     private void initInstances() {

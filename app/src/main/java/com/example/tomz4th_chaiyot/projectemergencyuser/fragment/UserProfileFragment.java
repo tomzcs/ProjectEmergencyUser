@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
@@ -29,12 +30,14 @@ import com.nguyenhoanglam.imagepicker.model.Image;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.tomz4th_chaiyot.projectemergencyuser.BaseUrl.BASE_URL_IMG_USER;
 
 
 /**
@@ -252,8 +255,35 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             Log.e("bitmap", bitmap.toString());
             Log.e("base", encoded);
             Log.e("name ", sb.toString());
+            updateImg(encoded);
         }
 
+    }
+    private void updateImg(String encode){
+        Call<UsersCollectionDao> call = HttpManager.getInstance().getService().AddImgUser(dao.getUser().get(0).getUserId(),encode);
+        call.enqueue(new Callback<UsersCollectionDao>() {
+            @Override
+            public void onResponse(Call<UsersCollectionDao> call, Response<UsersCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    UsersCollectionDao data = response.body();
+                    if (data.isSuccess()) {
+
+                    } else {
+
+                    }
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UsersCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
+            }
+        });
     }
 
     public boolean confirmPassword(String password, String confirm) {
@@ -319,6 +349,12 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         edtCarName.setText("" + dao.getUser().get(0).getCarName());
                         edtCarColor.setText("" + dao.getUser().get(0).getCarColor());
                         edtCarNumber.setText("" + dao.getUser().get(0).getCarNumber());
+                        String nameImg = dao.getUser().get(0).getImg();
+                        Glide.with(getContext())
+                                .load(BASE_URL_IMG_USER + nameImg)
+                                .signature(new StringSignature(UUID.randomUUID().toString()))
+                                .into(imgPhoto);
+
                     } else {
                         showToast(message);
 

@@ -152,7 +152,7 @@ public class ServiceCommentFragment extends Fragment {
                     dataComment = response.body();
                     if (dataComment.isSuccess()) {
                         if (dataComment.getComment().size() == 0) {
-                            Toast.makeText(getContext(), "111", Toast.LENGTH_SHORT).show();
+
                         } else {
                             tvCountComment.setText("" + dataComment.getComment().size());
                             listAdapter.setDataComment(dataComment);
@@ -160,7 +160,7 @@ public class ServiceCommentFragment extends Fragment {
                         }
                     }
                 } else {
-                    Toast.makeText(getContext(), "333", Toast.LENGTH_SHORT).show();
+
                 }
             }
 

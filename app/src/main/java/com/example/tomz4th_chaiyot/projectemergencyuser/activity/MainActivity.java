@@ -28,10 +28,13 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
 import com.crashlytics.android.Crashlytics;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarColorCollectionDao;
@@ -50,11 +53,14 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.manager.userManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.notification.UserUpdateFcmManager;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.example.tomz4th_chaiyot.projectemergencyuser.BaseUrl.BASE_URL_IMG_USER;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -76,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<String> spTextCarType = new ArrayList<String>();
     private ArrayList<String> spTextCarName = new ArrayList<String>();
     private ArrayList<String> spTextCarColor = new ArrayList<String>();
+    ImageView imgPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,9 +165,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvName = (TextView) headerLayout.findViewById(R.id.tvName);
         tvEmail = (TextView) headerLayout.findViewById(R.id.tvEmail);
         tvTel = (TextView) headerLayout.findViewById(R.id.tvTel);
-        tvName.setText("ชื่อ :" + dao.getUser().get(0).getName());
-        tvEmail.setText("อีเมล์ :" + dao.getUser().get(0).getEmail());
-        tvTel.setText("ประเภท :" + dao.getUser().get(0).getTypeName());
+        imgPhoto = (ImageView) headerLayout.findViewById(R.id.imgPhoto);
+
+        getUsersShow();
 
         getCars();
 
@@ -242,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //overridePendingTransition(R.anim.from_right, R.anim.to_left);
         } else if (id == R.id.nav_history) {
             startActivity(new Intent(this, HistoryActivity.class));
+            finish();
 
         }else if(id == R.id.nav_complaint){
             startActivity(new Intent(this, ComplaintActivity.class));
@@ -321,76 +329,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     daocar = response.body();
                     if (daocar.isSuccess()) {
                         if (daocar.getCar().get(0).getCarName() == null) {
-                            /*final AlertDialog.Builder builder =
-                                    new AlertDialog.Builder(MainActivity.this);
-                            LayoutInflater inflater = getLayoutInflater();
 
-                            View view = inflater.inflate(R.layout.dialog_car, null);
-                            builder.setView(view);
-
-                            carType = (EditText) view.findViewById(R.id.edtCarType);
-                            carName = (EditText) view.findViewById(R.id.edtCarName);
-                            carColor = (EditText) view.findViewById(R.id.edtCarColor);
-                            carNumber = (EditText) view.findViewById(R.id.edtCarNumber);
-
-                            final TextView tvCarType = (TextView) view.findViewById(R.id.tvCarType);
-                            TextView tvCarName = (TextView) view.findViewById(R.id.tvCarName);
-
-                            //Spinner
-                            final Spinner spCarType = (Spinner) view.findViewById(R.id.spCarType);
-                            createCarType();
-                            ArrayAdapter<String> adapterCarType = new ArrayAdapter<String>(getBaseContext(),
-                                    R.layout.support_simple_spinner_dropdown_item, spTextCarType);
-                            spCarType.setAdapter(adapterCarType);
-
-                            final Spinner spCarName = (Spinner) view.findViewById(R.id.spCarName);
-
-                            final Button btnNextName = (Button) view.findViewById(R.id.btnNextName);
-                            btnNextName.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String text = spCarType.getSelectedItem().toString().substring(0, 1);
-                                    if (text.equals("ก")) {
-                                        showToast(text);
-                                    } else {
-                                        int id = Integer.parseInt(text);
-                                        tvCarType.setVisibility(View.GONE);
-                                        spCarType.setVisibility(View.GONE);
-                                        btnNextName.setVisibility(View.GONE);
-                                        createCarName(id);
-                                        ArrayAdapter<String> adapterCarName = new ArrayAdapter<String>(getBaseContext(),
-                                                R.layout.support_simple_spinner_dropdown_item, spTextCarName);
-                                        spCarName.setAdapter(adapterCarName);
-                                    }
-                                }
-                            });
-                            Button btnExit = (Button) view.findViewById(R.id.btnExit);
-                            btnExit.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    builder.setNegativeButton("ข้าม", new  {
-
-                                    });
-                                }
-                            });
-
-
-                            builder.setPositiveButton("ต่อไป", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    //send();
-                                }
-                            });
-
-                            builder.setNegativeButton("ข้าม", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-
-                            builder.show();
-*/
                             final Dialog dialog = new Dialog(MainActivity.this);
                             dialog.setContentView(R.layout.dialog_car);
 
@@ -792,6 +731,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onFailure(Call<RequestCollectionDao> call, Throwable t) {
 
+            }
+        });
+    }
+
+    private void getUsersShow() {
+        int id = dao.getUser().get(0).getUserId();
+
+        Call<UsersCollectionDao> call = HttpManager.getInstance().getService().getUsersShow(id);
+        call.enqueue(new Callback<UsersCollectionDao>() {
+            @Override
+            public void onResponse(Call<UsersCollectionDao> call, Response<UsersCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    dao = response.body();
+                    int id = dao.getUser().get(0).getUserId();
+                    String message = dao.getMessage();
+                    if (dao.isSuccess()) {
+                        tvName.setText("ชื่อ :" + dao.getUser().get(0).getName());
+                        tvEmail.setText("อีเมล์ :" + dao.getUser().get(0).getEmail());
+                        tvTel.setText("ประเภท :" + dao.getUser().get(0).getTypeName());
+                        String nameImg = dao.getUser().get(0).getImg();
+
+                        Glide.with(MainActivity.this)
+                                .load(BASE_URL_IMG_USER + nameImg)
+                                .signature(new StringSignature(UUID.randomUUID().toString()))
+                                .into(imgPhoto);
+
+                    } else {
+                        showToast(message);
+
+                    }
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UsersCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+                showToast("เชื่อมต่อไม่สำเร็จ");
             }
         });
     }

@@ -14,17 +14,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.StringSignature;
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceCommentFragment;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceProfileFragment;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
 
+import java.util.UUID;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.example.tomz4th_chaiyot.projectemergencyuser.BaseUrl.BASE_URL_IMG_SERVICE;
+import static com.example.tomz4th_chaiyot.projectemergencyuser.BaseUrl.BASE_URL_IMG_USER;
 
 
 public class ServiceProfileActivity extends AppCompatActivity {
@@ -36,6 +44,7 @@ public class ServiceProfileActivity extends AppCompatActivity {
     private boolean isShow = true;
     private int scrollRange = -1;
     private String getId;
+    private ImageView imgPhotoService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +53,7 @@ public class ServiceProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_service_profile);
 
         Bundle bundle = getIntent().getExtras();
-        getId = bundle.getString("id","0");
+        getId = bundle.getString("id", "0");
 
         initInstances();
 
@@ -67,11 +76,11 @@ public class ServiceProfileActivity extends AppCompatActivity {
         NestedScrollView nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScrollView);
         nestedScrollView.setFillViewport(true);
 
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
+        //collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
 
-       // AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
-       // appBarLayout.addOnOffsetChangedListener(this);
-
+        // AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
+        // appBarLayout.addOnOffsetChangedListener(this);
+        imgPhotoService = (ImageView) findViewById(R.id.imgPhotoService);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
 
         int id = Integer.parseInt(getId);
@@ -84,7 +93,11 @@ public class ServiceProfileActivity extends AppCompatActivity {
                     ServiceCollectionDao daoService = response.body();
 
                     if (daoService.isSuccess()) {
-                        collapsingToolbarLayout.setTitle(""+daoService.getService().get(0).getServiceName());
+                        collapsingToolbarLayout.setTitle("" + daoService.getService().get(0).getServiceName());
+                        Glide.with(ServiceProfileActivity.this)
+                                .load(BASE_URL_IMG_SERVICE + daoService.getService().get(0).getServiceImg())
+                                .signature(new StringSignature(UUID.randomUUID().toString()))
+                                .into(imgPhotoService);
                     }
 
                 } else {

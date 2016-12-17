@@ -23,6 +23,8 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:scaleType="centerCrop"
+                    android:id="@+id/imgPhoto"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/logouser" />

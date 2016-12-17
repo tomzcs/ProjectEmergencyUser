@@ -1,12 +1,17 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.UserProfileFragment;
+import com.inthecheesefactory.thecheeselibrary.manager.Contextor;
 
 /**
  * Created by toMz4th-ChaiYot on 11/5/2016.
@@ -15,6 +20,7 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.UserProfileFrag
 public class UserProfileActivity extends AppCompatActivity {
 
     Toolbar toolbar;
+    private boolean doubleBackToExitPressedOnce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +48,23 @@ public class UserProfileActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
             finish();
             return true;
         }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        this.doubleBackToExitPressedOnce = true;
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
+        finish();
+
     }
 }

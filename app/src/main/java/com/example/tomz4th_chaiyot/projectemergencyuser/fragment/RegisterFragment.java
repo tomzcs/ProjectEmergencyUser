@@ -159,7 +159,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
         if (!validateEmail()) {
             return;
         }
-        Call<UsersCollectionDao> call = HttpManager.getInstance().getService().register(name, tel, email, password,"123.png", "1");
+        Call<UsersCollectionDao> call = HttpManager.getInstance().getService().register(name, tel, email, password,"user.png", "1");
         call.enqueue(new Callback<UsersCollectionDao>() {
             @Override
             public void onResponse(Call<UsersCollectionDao> call, Response<UsersCollectionDao> response) {

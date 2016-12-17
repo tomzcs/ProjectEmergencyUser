@@ -6,6 +6,8 @@ import com.inthecheesefactory.thecheeselibrary.manager.Contextor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.example.tomz4th_chaiyot.projectemergencyuser.BaseUrl.BASE_URL_REST;
+
 public class HttpManager {
 
     private static HttpManager instance;
@@ -23,7 +25,7 @@ public class HttpManager {
         mContext = Contextor.getInstance().getContext();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.137.1:8080/db_connection/v1/")
+                .baseUrl(BASE_URL_REST)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
