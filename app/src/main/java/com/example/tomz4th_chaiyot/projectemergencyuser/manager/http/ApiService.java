@@ -85,11 +85,15 @@ public interface ApiService {
     @GET("user/getCarColor")
     Call<CarColorCollectionDao> getCarColor();
 
-    @GET("user/getServiceAll")
-    Call<ServiceCollectionDao> getServiceAll();
 
-    @GET("user/getServiceAllShow")
-    Call<ServiceCollectionDao> getServiceAllShow();
+    @FormUrlEncoded
+    @POST("user/getServiceAll")
+    Call<ServiceCollectionDao> getServiceAll(@Field("DESCRIPTION") String description);
+
+    @FormUrlEncoded
+    @POST("user/getServiceAllShow")
+    Call<ServiceCollectionDao> getServiceAllShow(@Field("DESCRIPTION") String description);
+
 
     @GET("user/getServiceId/{id}")
     Call<ServiceCollectionDao> getService(@Path("id") int serviceId);

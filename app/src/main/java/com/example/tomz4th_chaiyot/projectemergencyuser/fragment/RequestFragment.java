@@ -2,8 +2,12 @@ package com.example.tomz4th_chaiyot.projectemergencyuser.fragment;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -56,8 +60,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.inthecheesefactory.thecheeselibrary.manager.Contextor;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,8 +80,8 @@ public class RequestFragment extends Fragment implements
 
     private GoogleApiClient googleApiClient;
     private GoogleMap mMap;
-    private double latitude = 0;
-    private double longitude = 0;
+    public double latitude = 0;
+    public double longitude = 0;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     EditText editTextRequestDetail;
     TextView editTextRequestDetailCar;
@@ -104,6 +111,7 @@ public class RequestFragment extends Fragment implements
     Dialog dialog;
     RecyclerView recyclerView;
     CommentsListAdapter listAdapterComment;
+    public String description;
 
     public RequestFragment() {
         super();
@@ -280,6 +288,26 @@ public class RequestFragment extends Fragment implements
             // Do something when location provider not available
         }
     }
+    public String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                String aum = addresses.get(0).getLocality();
+                String pro = addresses.get(0).getAdminArea();
+
+                strAdd = aum+pro;
+
+            } else {
+                Log.w("address", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.w("address", "Canont get Address!");
+        }
+        return strAdd;
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -303,7 +331,7 @@ public class RequestFragment extends Fragment implements
         mMap.clear();
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-
+        description = getCompleteAddressString(latitude,longitude);
         edtLat.setText(latitude + "");
         edtLon.setText(longitude + "");
 
@@ -496,6 +524,8 @@ public class RequestFragment extends Fragment implements
         String requestDetailCar = editTextRequestDetailCar.getText().toString();
         String requestLat = edtLat.getText().toString();
         String requestLon = edtLon.getText().toString();
+        String description = getCompleteAddressString(latitude,longitude);
+
         String serviceId = edtServiceId.getText().toString();
         final int serviceIdd = Integer.parseInt(serviceId);
 
@@ -533,6 +563,7 @@ public class RequestFragment extends Fragment implements
         String request = spRequestDetail.getSelectedItem().toString();
         String requestDetail = "  " + editTextRequestDetail.getText().toString();
         String requestDetailCar = editTextRequestDetailCar.getText().toString();
+
 
         Call<UserSendNotification> call = HttpManager.getInstance().getService().notification(serviceIdd, request, requestDetail + requestDetailCar);
         call.enqueue(new Callback<UserSendNotification>() {
@@ -728,7 +759,8 @@ public class RequestFragment extends Fragment implements
         listView.setAdapter(listAdapter);
         listView.setOnItemClickListener(listViewItemClickListener);
 
-        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAll();
+
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAll(description);
         call.enqueue(new Callback<ServiceCollectionDao>() {
             @Override
             public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
@@ -797,8 +829,6 @@ public class RequestFragment extends Fragment implements
             recyclerView.setAdapter(listAdapterComment);
             listAdapterComment.notifyDataSetChanged();
             int idservice = daoService.getService().get(position).getUserServiceId();
-            Log.e("idservice", idservice + "");
-            Log.e("popsition", position + "");
 
             loadData(idservice, tvNotData);
             dialog1.show();

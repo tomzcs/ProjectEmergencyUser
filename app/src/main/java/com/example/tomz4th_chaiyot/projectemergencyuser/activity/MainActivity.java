@@ -246,11 +246,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         if (id == R.id.nav_edit_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
-            //overridePendingTransition(R.anim.from_right, R.anim.to_left);
+            finish();
         } else if (id == R.id.nav_history) {
             startActivity(new Intent(this, HistoryActivity.class));
-            finish();
-
         }else if(id == R.id.nav_complaint){
             startActivity(new Intent(this, ComplaintActivity.class));
         }

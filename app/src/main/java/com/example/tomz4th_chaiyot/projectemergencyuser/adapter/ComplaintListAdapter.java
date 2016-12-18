@@ -26,7 +26,7 @@ import static com.example.tomz4th_chaiyot.projectemergencyuser.BaseUrl.BASE_URL_
 public class ComplaintListAdapter extends RecyclerView.Adapter<ComplaintListAdapter.MyViewHolder> {
 
     Context mContext;
-    ComplaintCollectionDao dataCommplaint;
+    ComplaintCollectionDao dataComplaint;
     TextView tvName;
     TextView tvDate;
     TextView tvDetail;
@@ -39,13 +39,13 @@ public class ComplaintListAdapter extends RecyclerView.Adapter<ComplaintListAdap
 
     @Override
     public int getItemCount() {
-        if (dataCommplaint == null) {
+        if (dataComplaint == null) {
             return 0;
         }
-        if (dataCommplaint.getComplaint() == null) {
+        if (dataComplaint.getComplaint() == null) {
             return 0;
         }
-        return dataCommplaint.getComplaint().size();
+        return dataComplaint.getComplaint().size();
     }
 
     @Override
@@ -62,11 +62,11 @@ public class ComplaintListAdapter extends RecyclerView.Adapter<ComplaintListAdap
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         if (position<getItemCount()){
-            tvName.setText(dataCommplaint.getComplaint().get(position).getServiceName());
-            tvDate.setText(dataCommplaint.getComplaint().get(position).getCreatedAt());
-            tvDetail.setText(dataCommplaint.getComplaint().get(position).getDetail());
+            tvName.setText(dataComplaint.getComplaint().get(position).getServiceName());
+            tvDate.setText(dataComplaint.getComplaint().get(position).getCreatedAt());
+            tvDetail.setText(dataComplaint.getComplaint().get(position).getDetail());
             Glide.with(mContext)
-                    .load(BASE_URL_IMG_USER + dataCommplaint.getComplaint().get(position).getUserImg())
+                    .load(BASE_URL_IMG_USER + dataComplaint.getComplaint().get(position).getUserImg())
                     .signature(new StringSignature(UUID.randomUUID().toString()))
                     .into(imgPhoto);
         }
@@ -85,7 +85,7 @@ public class ComplaintListAdapter extends RecyclerView.Adapter<ComplaintListAdap
         }
     }
 
-    public void setDataCommplaint(ComplaintCollectionDao dataCommplaint) {
-        this.dataCommplaint = dataCommplaint;
+    public void setDataComplaint(ComplaintCollectionDao dataCommplaint) {
+        this.dataComplaint = dataCommplaint;
     }
 }
