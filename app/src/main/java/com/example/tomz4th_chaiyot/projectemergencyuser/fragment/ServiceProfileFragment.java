@@ -51,6 +51,7 @@ public class ServiceProfileFragment extends Fragment implements OnMapReadyCallba
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     String id;
     int idd;
+    TextView tvType;
     TextView tvName;
     TextView tvDetail;
     TextView tvAdd;
@@ -107,6 +108,7 @@ public class ServiceProfileFragment extends Fragment implements OnMapReadyCallba
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.mapContainer);
         mapFragment.getMapAsync(this);
+        tvType = (TextView) rootView.findViewById(R.id.tvType);
         tvName = (TextView) rootView.findViewById(R.id.tvName);
         tvDetail = (TextView) rootView.findViewById(R.id.tvDetail);
         tvAdd = (TextView) rootView.findViewById(R.id.tvAdd);
@@ -121,10 +123,18 @@ public class ServiceProfileFragment extends Fragment implements OnMapReadyCallba
                     daoService = response.body();
 
                     if (daoService.isSuccess()) {
+                        tvType.setText(daoService.getService().get(0).getServiceTypeName());
                         tvName.setText(daoService.getService().get(0).getServiceName());
                         tvDetail.setText(daoService.getService().get(0).getServiceDetail());
                         tvAdd.setText(daoService.getService().get(0).getServiceAdd());
-                        tvTel.setText(daoService.getService().get(0).getServiceTel());
+                        String tel = daoService.getService().get(0).getServiceTel();
+                        if (tel.length() == 10){
+                            tvTel.setText(tel);
+                        }else if(tel.length() == 20){
+                            tvTel.setText(tel.substring(0,10)+"\n"+tel.substring(10,20));
+                        }else if (tel.length() == 30){
+                            tvTel.setText(tel.substring(0,10)+"\n"+tel.substring(10,20)+"\n"+tel.substring(20,30));
+                        }
                     }
 
                 } else {

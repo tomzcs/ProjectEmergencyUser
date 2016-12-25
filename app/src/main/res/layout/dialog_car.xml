@@ -37,6 +37,7 @@
         android:fillViewport="true">
 
         <LinearLayout
+            android:background="#EEEEEE"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -50,6 +51,7 @@
                 android:visibility="gone" />
 
             <android.support.v7.widget.CardView
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 fancy:cardElevation="2dp"
@@ -69,11 +71,17 @@
                         android:textColor="@android:color/background_dark"
                         android:visibility="visible" />
 
-                    <Spinner
-                        android:id="@+id/spCarType"
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="visible" />
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/spCarType"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="visible" />
+                    </android.support.v7.widget.CardView>
+
 
                     <TextView
                         android:id="@+id/tvCarName"
@@ -83,11 +91,16 @@
                         android:textColor="@android:color/background_dark"
                         android:visibility="gone" />
 
-                    <Spinner
-                        android:id="@+id/spCarName"
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/spCarName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone" />
+                    </android.support.v7.widget.CardView>
 
                     <TextView
                         android:id="@+id/tvCarColor"
@@ -97,18 +110,23 @@
                         android:textColor="@android:color/background_dark"
                         android:visibility="gone" />
 
-                    <Spinner
-                        android:layout_marginBottom="10dp"
-                        android:id="@+id/spCarColor"
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
+                        android:layout_height="wrap_content">
 
+                        <Spinner
+                            android:id="@+id/spCarColor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:visibility="gone" />
+                    </android.support.v7.widget.CardView>
 
                     <TextView
                         android:id="@+id/tvCarNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:text="ป้ายทะเบียน"
                         android:textColor="@android:color/background_dark"
                         android:visibility="gone" />

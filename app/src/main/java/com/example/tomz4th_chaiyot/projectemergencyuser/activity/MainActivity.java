@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         getRequestComment(5);
         getRequestSuccess(2);
+        getRequestCancel(6);
 
         initInstances();
 
@@ -249,10 +250,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             finish();
         } else if (id == R.id.nav_history) {
             startActivity(new Intent(this, HistoryActivity.class));
-        }else if(id == R.id.nav_complaint){
+        } else if (id == R.id.nav_complaint) {
             startActivity(new Intent(this, ComplaintActivity.class));
-        }
-        else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_logout) {
             AlertDialog.Builder builder =
                     new AlertDialog.Builder(MainActivity.this);
 
@@ -694,6 +694,72 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    private void getRequestCancel(int statusId) {
+
+        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().getRequestAddComment(dao.getUser().get(0).getUserId(), statusId);
+        call.enqueue(new Callback<RequestCollectionDao>() {
+            @Override
+            public void onResponse(Call<RequestCollectionDao> call, Response<RequestCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    final RequestCollectionDao data = response.body();
+                    if (data.isSuccess()) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("การร้องขอ")
+                                .setMessage("ผู้ให้บริการไม่รับเรื่องของคุณ")
+                                .setNegativeButton("ปิด", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        UpdateRequestStatus(data.getRequest().get(0).getRequestId(), 7);
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .setPositiveButton("แสดงความคิดเห็น", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(final DialogInterface dialog, int which) {
+                                        UpdateRequestStatus(data.getRequest().get(0).getRequestId(), 7);
+                                        final int idService = data.getRequest().get(0).getUserIdService();
+                                        final Dialog dialogcommwnt = new Dialog(MainActivity.this);
+                                        dialogcommwnt.setContentView(R.layout.dialog_comment);
+
+                                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                        lp.copyFrom(dialogcommwnt.getWindow().getAttributes());
+                                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                                        dialogcommwnt.getWindow().setAttributes(lp);
+
+                                        final EditText edtComment = (EditText) dialogcommwnt.findViewById(R.id.edtComment);
+
+                                        Button btnComment = (Button) dialogcommwnt.findViewById(R.id.btnComment);
+                                        btnComment.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                sendComment(edtComment.getText().toString(), idService);
+                                                dialogcommwnt.dismiss();
+
+                                            }
+                                        });
+                                        dialogcommwnt.show();
+                                    }
+                                })
+                                .show();
+                    } else {
+                        Log.e("data", "Okay");
+                    }
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+
+            }
+
+        });
+    }
+
     private void sendComment(String text, int serviceId) {
         Call<CommentCollectionDao> call = HttpManager.getInstance().getService().insertComment(text, dao.getUser().get(0).getUserId(), serviceId);
         call.enqueue(new Callback<CommentCollectionDao>() {
@@ -702,7 +768,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if (response.isSuccessful()) {
                     showToast("เพิ่มความคิดเห็นเรียบร้อยแล้ว");
-
 
                 } else {
                     Log.e("Error", response.errorBody().toString());

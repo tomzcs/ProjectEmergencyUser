@@ -35,6 +35,10 @@ public class ServiceDao {
     private String userName;
     @SerializedName("USER_IMG")
     private String userImg;
+    @SerializedName("SERVICE_TYPE")
+    private int serviceType;
+    @SerializedName("SERVICE_TYPE_NAME")
+    private String serviceTypeName;
 
     public ServiceDao() {
 
@@ -150,5 +154,21 @@ public class ServiceDao {
 
     public void setServiceStatus(int serviceStatus) {
         this.serviceStatus = serviceStatus;
+    }
+
+    public int getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(int serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public String getServiceTypeName() {
+        return serviceTypeName;
+    }
+
+    public void setServiceTypeName(String serviceTypeName) {
+        this.serviceTypeName = serviceTypeName;
     }
 }
