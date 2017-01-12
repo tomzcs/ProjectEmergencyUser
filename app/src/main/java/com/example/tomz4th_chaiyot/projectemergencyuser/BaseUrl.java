@@ -7,7 +7,7 @@ package com.example.tomz4th_chaiyot.projectemergencyuser;
 public class BaseUrl {
 
     //URL
-    private static final String URL = "http://192.168.137.1:8080/db_connection/";
+    private static final String URL = "http://10.7.2.44:8080/db_connection/";
     public static final String BASE_URL_REST = URL + "v1/";
 
     //URL IMG

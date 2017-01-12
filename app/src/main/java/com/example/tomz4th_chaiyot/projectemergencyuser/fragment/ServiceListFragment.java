@@ -1,6 +1,7 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.fragment;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -55,7 +57,7 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
         OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener{
+        LocationListener {
     private GoogleApiClient googleApiClient;
     private GoogleMap mMap;
     public double latitude = 0;
@@ -65,6 +67,7 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
     ListView listView;
     ServiceListAllAdapter listAdapter;
     ServiceCollectionDao daoService;
+    private boolean isData;
 
     public ServiceListFragment() {
         super();
@@ -81,10 +84,21 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init(savedInstanceState);
-
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
 
     private void onRestoreInstanceState(Bundle savedInstanceState) {
     }
@@ -118,15 +132,14 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
         listView.setOnItemClickListener(listViewItemClickListener);
 
 
-
     }
-
 
 
     @Override
     public void onStart() {
         super.onStart();
         googleApiClient.connect();
+
 
     }
 
@@ -136,6 +149,7 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
         if (googleApiClient != null && googleApiClient.isConnected()) {
             googleApiClient.disconnect();
         }
+
     }
 
     /*
@@ -200,6 +214,7 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
             // Do something when location provider not available
         }
     }
+
     public String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
@@ -241,8 +256,11 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
         mMap.clear();
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-        description = getCompleteAddressString(latitude,longitude);
-        loadata();
+        description = getCompleteAddressString(latitude, longitude);
+        if (!isData) {
+
+            loadata();
+        }
         LatLng latlng = new LatLng(latitude, longitude);
         MarkerOptions markFrom = new MarkerOptions().position(new LatLng(latitude, longitude)).title("ตำแหน่งปัจจุบัน");
         mMap.addMarker(markFrom);
@@ -259,16 +277,19 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            String serviceId = daoService.getService().get(position).getServiceId()+"";
-            Intent intent = new Intent(getContext(),ServiceProfileActivity.class);
-            intent.putExtra("id",serviceId);
+            String serviceId = daoService.getService().get(position).getServiceId() + "";
+            Intent intent = new Intent(getContext(), ServiceProfileActivity.class);
+            intent.putExtra("id", serviceId);
             startActivity(intent);
 
         }
     };
 
-    private void loadata() {
-        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAllShow(description);
+    public void loadata() {
+
+        String getlat = Double.toString(latitude);
+        String getlon = Double.toString(longitude);
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAllNear(getlat, getlon,  100 + "");
         call.enqueue(new Callback<ServiceCollectionDao>() {
             @Override
             public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
@@ -276,7 +297,7 @@ public class ServiceListFragment extends Fragment implements AdapterView.OnItemC
                     daoService = response.body();
                     ServiceListsManager.getInstance().setDao(daoService);
                     listAdapter.notifyDataSetChanged();
-
+                    isData = true;
                 } else {
                     Log.e("Error", response.errorBody().toString());
                 }

@@ -1,8 +1,11 @@
 package com.example.tomz4th_chaiyot.projectemergencyuser.activity;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -13,6 +16,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,6 +34,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +48,9 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarNameCollectionDao
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarTypeCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CommentCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RateCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.RequestFragment;
 import com.example.tomz4th_chaiyot.projectemergencyuser.fragment.ServiceListFragment;
@@ -50,7 +58,13 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HistoryListManag
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.carManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.userManager;
+import com.example.tomz4th_chaiyot.projectemergencyuser.notification.Config;
 import com.example.tomz4th_chaiyot.projectemergencyuser.notification.UserUpdateFcmManager;
+import com.example.tomz4th_chaiyot.projectemergencyuser.util.NotificationUtils;
+import com.inthecheesefactory.thecheeselibrary.manager.Contextor;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -83,6 +97,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ArrayList<String> spTextCarName = new ArrayList<String>();
     private ArrayList<String> spTextCarColor = new ArrayList<String>();
     ImageView imgPhoto;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private String title;
+    private String message;
+    private String payload;
+    private JSONObject data;
+    private String status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,9 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             });
         }
         getRequestComment(5);
-        getRequestSuccess(2);
         getRequestCancel(6);
-
         initInstances();
 
 
@@ -167,13 +185,63 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvEmail = (TextView) headerLayout.findViewById(R.id.tvEmail);
         tvTel = (TextView) headerLayout.findViewById(R.id.tvTel);
         imgPhoto = (ImageView) headerLayout.findViewById(R.id.imgPhoto);
-
-        getUsersShow();
-
         getCars();
 
 
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                    try {
+                        title = intent.getStringExtra("title"); //check
+                        message = intent.getStringExtra("message");//check
+                        payload = intent.getStringExtra("payload");//check
+                        data = new JSONObject(payload);//check
+                        status = data.getString("status");//check
+
+                    } catch (JSONException e) {
+                        Log.e("1", "Json Exception: " + e.getMessage());
+                    } catch (Exception e) {
+                        Log.e("2", "Exception: " + e.getMessage());
+                    }
+
+                    //Handle Code Here!!
+                    //loadDataJob();
+                    if (title.equals("รับการร้องขอ")) {
+                        getRequestSuccess(2);
+                    }
+                    if (title.equals("ความคิดเห็น")) {
+                        getRequestComment(5);
+                    }
+                    if (title.equals("ไม่รับ")) {
+                        getRequestCancel(6);
+                    }
+
+                }
+
+
+            }
+        };
+
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getUsersShow();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(Config.PUSH_NOTIFICATION));
+
+        // clear the notification area when the app is opened
+        NotificationUtils.clearNotifications(Contextor.getInstance().getContext());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+    }
+
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -195,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
-        private String tabTitles[] = new String[]{"การ้องขอ", "ร้านที่ให้บริการ"};
+        private String tabTitles[] = new String[]{"การร้องขอ", "ร้านที่ให้บริการ"};
 
 
         public ViewPagerAdapter(FragmentManager manager) {
@@ -247,11 +315,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         if (id == R.id.nav_edit_profile) {
             startActivity(new Intent(this, UserProfileActivity.class));
-            finish();
         } else if (id == R.id.nav_history) {
             startActivity(new Intent(this, HistoryActivity.class));
-        } else if (id == R.id.nav_complaint) {
-            startActivity(new Intent(this, ComplaintActivity.class));
+        } else if (id == R.id.nav_tel) {
+            startActivity(new Intent(this, TelActivity.class));
         } else if (id == R.id.nav_logout) {
             AlertDialog.Builder builder =
                     new AlertDialog.Builder(MainActivity.this);
@@ -307,7 +374,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onFailure(Call<CarsCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
 
             }
 
@@ -484,7 +550,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             dialog.show();
                         }
                     } else {
-                        Log.e("error", "555555555555555555");
+
                     }
                 } else {
                     Log.e("Error", response.errorBody().toString());
@@ -495,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onFailure(Call<CarsCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
+
 
             }
 
@@ -526,7 +592,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onFailure(Call<CarTypeCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
+
 
             }
 
@@ -560,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onFailure(Call<CarNameCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
+
 
             }
 
@@ -592,7 +658,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onFailure(Call<CarColorCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
+
 
             }
 
@@ -624,13 +690,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         lp.copyFrom(dialog.getWindow().getAttributes());
                         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
                         dialog.getWindow().setAttributes(lp);
-
+                        final RatingBar ratingBar = (RatingBar) dialog.findViewById(R.id.rate);
                         final EditText edtComment = (EditText) dialog.findViewById(R.id.edtComment);
 
                         Button btnComment = (Button) dialog.findViewById(R.id.btnComment);
                         btnComment.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                sendRate(ratingBar.getRating(), idService);
                                 sendComment(edtComment.getText().toString(), idService);
                                 UpdateRequestStatus(idRequest, 3);
                                 dialog.dismiss();
@@ -639,7 +706,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         });
                         dialog.show();
                     } else {
-                        Log.e("data", "Okay");
+
                     }
 
                 } else {
@@ -666,18 +733,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (response.isSuccessful()) {
                     RequestCollectionDao data = response.body();
                     if (data.isSuccess()) {
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("การร้องขอ")
-                                .setMessage("ร้านให้บริการรับเรื่องคุณแล้ว")
-                                .setPositiveButton("ปิด", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .show();
+                        getNameService(data.getRequest().get(0).getUserIdService());
                     } else {
-                        Log.e("data", "Okay");
+
                     }
 
                 } else {
@@ -694,6 +752,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    private void getNameService(int id) {
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServices(id);
+        call.enqueue(new Callback<ServiceCollectionDao>() {
+            @Override
+            public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
+                if (response.isSuccessful()) {
+                    ServiceCollectionDao data = response.body();
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("การร้องขอ")
+                            .setMessage("ร้าน " + data.getService().get(0).getServiceName() + " รับเรื่องคุณแล้ว")
+                            .setPositiveButton("ปิด", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServiceCollectionDao> call, Throwable t) {
+
+            }
+        });
+
+    }
+
     private void getRequestCancel(int statusId) {
 
         Call<RequestCollectionDao> call = HttpManager.getInstance().getService().getRequestAddComment(dao.getUser().get(0).getUserId(), statusId);
@@ -706,7 +792,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (data.isSuccess()) {
                         new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("การร้องขอ")
-                                .setMessage("ผู้ให้บริการไม่รับเรื่องของคุณ")
+                                .setMessage("ผู้ให้บริการร้าน " + data.getRequest().get(0).getServiceName() + " ไม่รับเรื่องของคุณ")
                                 .setNegativeButton("ปิด", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -743,7 +829,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 })
                                 .show();
                     } else {
-                        Log.e("data", "Okay");
+
                     }
 
                 } else {
@@ -834,6 +920,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onFailure(Call<UsersCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
                 showToast("เชื่อมต่อไม่สำเร็จ");
+            }
+        });
+    }
+
+    private void sendRate(float rate, int idService) {
+
+        Call<RateCollectionDao> call = HttpManager.getInstance().getService().insertRating(dao.getUser().get(0).getUserId(), Float.toString(rate), idService);
+        call.enqueue(new Callback<RateCollectionDao>() {
+            @Override
+            public void onResponse(Call<RateCollectionDao> call, Response<RateCollectionDao> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<RateCollectionDao> call, Throwable t) {
+
             }
         });
     }

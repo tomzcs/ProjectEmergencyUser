@@ -28,6 +28,7 @@ public class ServiceListItem extends BaseCustomViewGroup {
     TextView tvName;
     TextView tvDetail;
     TextView tvAdd;
+    TextView tvDistance;
     ImageView imgPhoto;
     ImageView imgPhotoService;
 
@@ -68,6 +69,7 @@ public class ServiceListItem extends BaseCustomViewGroup {
         tvName = (TextView) findViewById(R.id.tvName);
         tvDetail = (TextView) findViewById(R.id.tvDetail);
         tvAdd = (TextView) findViewById(R.id.tvAdd);
+        tvDistance = (TextView) findViewById(R.id.tvDistance);
         imgPhoto = (ImageView) findViewById(R.id.imgPhoto);
         imgPhotoService = (ImageView) findViewById(R.id.imgPhotoService);
     }
@@ -130,6 +132,10 @@ public class ServiceListItem extends BaseCustomViewGroup {
 
     public void setTvAdd(String text) {
         tvAdd.setText(text);
+    }
+
+    public void setTvDistance(String text) {
+        tvDistance.setText(text);
     }
 
     public void setImgPhoto(String text) {

@@ -45,7 +45,7 @@ public class HistoryListAdapter extends BaseAdapter {
         item.setTvRequestDetailCar(dao.getRequestDetailCar());
         item.setTvStatus(dao.getStatusName());
         item.setTvDate(dao.getRequestCreatedAt());
-        item.setTvUserIdService(dao.getUserName());
+        item.setTvUserIdService(dao.getServiceName());
 
         return item;
     }

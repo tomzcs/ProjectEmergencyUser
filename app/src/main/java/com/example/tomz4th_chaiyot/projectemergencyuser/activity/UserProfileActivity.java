@@ -49,8 +49,6 @@ public class UserProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(this,MainActivity.class);
-            startActivity(intent);
             finish();
             return true;
         }
@@ -58,13 +56,4 @@ public class UserProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onBackPressed() {
-
-        this.doubleBackToExitPressedOnce = true;
-        Intent intent = new Intent(this,MainActivity.class);
-        startActivity(intent);
-        finish();
-
-    }
 }

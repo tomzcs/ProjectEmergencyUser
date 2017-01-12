@@ -54,7 +54,6 @@ public class ServiceProfileActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         getId = bundle.getString("id", "0");
-
         initInstances();
 
 

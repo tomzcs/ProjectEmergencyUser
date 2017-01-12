@@ -87,7 +87,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activity.ComplaintActivity"></activity>
+        <activity android:name=".activity.ComplaintActivity" />
+        <activity android:name=".activity.TelActivity"></activity>
     </application>
 
 </manifest>

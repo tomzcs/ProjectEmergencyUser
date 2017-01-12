@@ -6,8 +6,11 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarTypeCollectionDao
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarsCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CommentCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ComplaintCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RateCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RateDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceTypeCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UserSendNotification;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
 
@@ -101,6 +104,9 @@ public interface ApiService {
     @GET("user/getComment/{id}")
     Call<CommentCollectionDao> getComment(@Path("id") int serviceId);
 
+    @GET("user/getService/{id}")
+    Call<ServiceCollectionDao> getServices(@Path("id") int serviceId);
+
     @FormUrlEncoded
     @POST("user/updateFcmId")
     Call<UsersCollectionDao> updateFcmId(@Field("USER_FCM_ID") String userFcmId,
@@ -151,5 +157,25 @@ public interface ApiService {
     @POST("user/AddImgUser")
     Call<UsersCollectionDao> AddImgUser(@Field("USER_ID") int userId,
                                         @Field("ENCODE") String encode);
+
+    @GET("user/getRate/{id}")
+    Call<RateDao> getRate(@Path("id") int serviceId);
+
+    @FormUrlEncoded
+    @POST("user/insertRating")
+    Call<RateCollectionDao> insertRating(@Field("USER_ID") int userId,
+                                         @Field("RATE") String rate,
+                                         @Field("SERVICE_ID") int serviceId
+    );
+
+    @FormUrlEncoded
+    @POST("user/getServiceAllNear")
+    Call<ServiceCollectionDao> getServiceAllNear(@Field("lat") String lat,
+                                                 @Field("lon") String lon,
+                                                 @Field("distance") String distance
+    );
+
+    @GET("user/getServiceType")
+    Call<ServiceTypeCollectionDao> getServiceType();
 
 }

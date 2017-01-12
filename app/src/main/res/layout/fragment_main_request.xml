@@ -13,6 +13,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:max="100"
+                android:padding="10dp"
+                android:progress="20" />
+
+            <TextView
+                android:id="@+id/tvSeekBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="20 กม." />
+        </LinearLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+    <FrameLayout
+        android:background="#80000000"
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="150dp"
+        android:visibility="visible">
+
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+
     <FrameLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
@@ -161,18 +207,55 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
+                    android:id="@+id/serviceAuto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5"
+                        android:gravity="center_vertical"
+                        android:hint="ร้องขอร้านบริเวณที่ที่อยู่ใกล้ๆคุณ"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/btn_serviceSelect"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_weight="1"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_edit_request" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/serviceSelect"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/edtUserIdService"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="5"
+                        android:layout_weight="4"
                         android:gravity="center_vertical"
                         android:hint="กรุณาเลือกร้านผู้ให้บริการ"
                         android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/btn_cancel_select"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_weight="1"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_cancel" />
 
                     <ImageView
                         android:id="@+id/btn_add_service"
@@ -180,7 +263,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:layout_weight="1"
-                        android:padding="10dp"
+                        android:padding="5dp"
                         android:src="@drawable/ic_plus_color" />
 
                 </LinearLayout>

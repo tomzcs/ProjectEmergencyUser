@@ -14,10 +14,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tomz4th_chaiyot.projectemergencyuser.R;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RateDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
 import com.google.android.gms.common.ConnectionResult;
@@ -57,6 +59,7 @@ public class ServiceProfileFragment extends Fragment implements OnMapReadyCallba
     TextView tvAdd;
     TextView tvTel;
     ServiceCollectionDao daoService;
+    private RatingBar rate;
 
     public ServiceProfileFragment() {
         super();
@@ -114,6 +117,8 @@ public class ServiceProfileFragment extends Fragment implements OnMapReadyCallba
         tvAdd = (TextView) rootView.findViewById(R.id.tvAdd);
         tvTel = (TextView) rootView.findViewById(R.id.tvTel);
 
+        rate = (RatingBar) rootView.findViewById(R.id.rate);
+
         Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getService(idd);
         call.enqueue(new Callback<ServiceCollectionDao>() {
             @Override
@@ -128,6 +133,7 @@ public class ServiceProfileFragment extends Fragment implements OnMapReadyCallba
                         tvDetail.setText(daoService.getService().get(0).getServiceDetail());
                         tvAdd.setText(daoService.getService().get(0).getServiceAdd());
                         String tel = daoService.getService().get(0).getServiceTel();
+                        getRate(daoService.getService().get(0).getUserServiceId());
                         if (tel.length() == 10){
                             tvTel.setText(tel);
                         }else if(tel.length() == 20){
@@ -284,6 +290,8 @@ public class ServiceProfileFragment extends Fragment implements OnMapReadyCallba
                         tvDetail.setText(daoService.getService().get(0).getServiceDetail());
                         tvAdd.setText(daoService.getService().get(0).getServiceAdd());
                         tvTel.setText(daoService.getService().get(0).getServiceTel());
+
+
                     }
 
                 } else {
@@ -301,6 +309,31 @@ public class ServiceProfileFragment extends Fragment implements OnMapReadyCallba
 
     private void toast(String text) {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
+    private void getRate(int idservice) {
+        Call<RateDao> call = HttpManager.getInstance().getService().getRate(idservice);
+        call.enqueue(new Callback<RateDao>() {
+            @Override
+            public void onResponse(Call<RateDao> call, Response<RateDao> response) {
+                if (response.isSuccessful()) {
+                    RateDao rateDao = response.body();
+                    float total = rateDao.getTotal();
+                    float count = rateDao.getCount();
+                    float rating = total / (count * 5) * 5;
+                    Log.e("total",total+"");
+                    Log.e("count",count+"");
+                    Log.e("rate",rating+"");
+                    rate.setRating(rating);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RateDao> call, Throwable t) {
+
+            }
+        });
     }
 
 }

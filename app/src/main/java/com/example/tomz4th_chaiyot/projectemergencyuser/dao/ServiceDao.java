@@ -39,6 +39,9 @@ public class ServiceDao {
     private int serviceType;
     @SerializedName("SERVICE_TYPE_NAME")
     private String serviceTypeName;
+    @SerializedName("place_distance")
+    private String distance;
+
 
     public ServiceDao() {
 
@@ -170,5 +173,13 @@ public class ServiceDao {
 
     public void setServiceTypeName(String serviceTypeName) {
         this.serviceTypeName = serviceTypeName;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
     }
 }

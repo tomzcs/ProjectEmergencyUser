@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group >
+    <group>
         <item
             android:id="@+id/nav_edit_profile"
             android:icon="@drawable/ic_edit"
@@ -10,9 +10,9 @@
             android:icon="@drawable/ic_history"
             android:title="ประวัติการใช้บริการ" />
         <item
-            android:id="@+id/nav_complaint"
-            android:icon="@drawable/ic_complain"
-            android:title="ประวัติการโดนร้องเรียน" />
+            android:id="@+id/nav_tel"
+            android:icon="@drawable/ic_tel"
+            android:title="เบอร์โทรฉุกเฉิน" />
 
     </group>
     <item android:title="เพิ่มเติม">

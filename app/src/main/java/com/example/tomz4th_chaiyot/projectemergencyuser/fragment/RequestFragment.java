@@ -2,6 +2,7 @@ package com.example.tomz4th_chaiyot.projectemergencyuser.fragment;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -27,8 +28,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,8 +47,10 @@ import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CarTypeCollectionDao
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.CommentCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.RequestCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.dao.ServiceTypeCollectionDao;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UserSendNotification;
 import com.example.tomz4th_chaiyot.projectemergencyuser.dao.UsersCollectionDao;
+import com.example.tomz4th_chaiyot.projectemergencyuser.manager.CountServiceManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.HttpManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.ServiceListManager;
 import com.example.tomz4th_chaiyot.projectemergencyuser.manager.userManager;
@@ -58,6 +64,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.inthecheesefactory.thecheeselibrary.manager.Contextor;
@@ -76,16 +84,18 @@ public class RequestFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        View.OnClickListener {
+        View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private GoogleApiClient googleApiClient;
     private GoogleMap mMap;
+    private GoogleMap mMaps;
     public double latitude = 0;
     public double longitude = 0;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     EditText editTextRequestDetail;
     TextView editTextRequestDetailCar;
     TextView edtUserIdService;
+    TextView tvSeekBar;
     EditText edtLat;
     EditText edtLon;
     EditText edtServiceId;
@@ -105,13 +115,21 @@ public class RequestFragment extends Fragment implements
     private ArrayList<String> spTextCarType = new ArrayList<String>();
     private ArrayList<String> spTextCarName = new ArrayList<String>();
     private ArrayList<String> spTextCarColor = new ArrayList<String>();
-    ListView listView;
-    ServiceListAdapter listAdapter;
-    ServiceCollectionDao daoService;
-    Dialog dialog;
-    RecyclerView recyclerView;
-    CommentsListAdapter listAdapterComment;
+    private ArrayList<String> spTextServiceType = new ArrayList<String>();
+    private ListView listView;
+    private ServiceListAdapter listAdapter;
+    private ServiceCollectionDao daoService;
+    private Dialog dialog;
+    private RecyclerView recyclerView;
+    private CommentsListAdapter listAdapterComment;
     public String description;
+    private LinearLayout serviceSelect;
+    private LinearLayout serviceAuto;
+    private ImageView btnServiceSelect;
+    private ImageView btnCancelSelect;
+    int distance = 20;
+    private FrameLayout progressBar;
+    private ProgressDialog mProgress;
 
     public RequestFragment() {
         super();
@@ -135,6 +153,8 @@ public class RequestFragment extends Fragment implements
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
+
+
     }
 
     @Override
@@ -157,6 +177,7 @@ public class RequestFragment extends Fragment implements
                 .build();
 
         listAdapterComment = new CommentsListAdapter(getContext());
+
     }
 
     private void initInstances(View rootView, Bundle savedInstanceState) {
@@ -165,10 +186,20 @@ public class RequestFragment extends Fragment implements
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.mapContainer);
         mapFragment.getMapAsync(this);
+        SeekBar seekbar = (SeekBar) rootView.findViewById(R.id.seekBar);
+        seekbar.setOnSeekBarChangeListener(this);
+        serviceSelect = (LinearLayout) rootView.findViewById(R.id.serviceSelect);
+        serviceAuto = (LinearLayout) rootView.findViewById(R.id.serviceAuto);
+        btnServiceSelect = (ImageView) rootView.findViewById(R.id.btn_serviceSelect);
+        btnCancelSelect = (ImageView) rootView.findViewById(R.id.btn_cancel_select);
+        btnServiceSelect.setOnClickListener(this);
+        btnCancelSelect.setOnClickListener(this);
+
 
         editTextRequestDetail = (EditText) rootView.findViewById(R.id.editTextRequestDetail);
         edtServiceId = (EditText) rootView.findViewById(R.id.edtServiceId);
 
+        tvSeekBar = (TextView) rootView.findViewById(R.id.tvSeekBar);
         editTextRequestDetailCar = (TextView) rootView.findViewById(R.id.editTextRequestDetailCar);
         edtUserIdService = (TextView) rootView.findViewById(R.id.edtUserIdService);
         edtLat = (EditText) rootView.findViewById(R.id.edtLat);
@@ -178,10 +209,13 @@ public class RequestFragment extends Fragment implements
 
         //Spinner
         spRequestDetail = (Spinner) rootView.findViewById(R.id.spRequestDetail);
-        createTextData();
-        ArrayAdapter<String> adapterText = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_dropdown_item_1line, text);
-        spRequestDetail.setAdapter(adapterText);
+
+        spTextServiceType.clear();
+        spRequestDetail.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_dropdown_item_1line, spTextServiceType));
+        createServiceType();
+        ArrayAdapter<String> adapterCarType = new ArrayAdapter<String>(getContext(),
+                R.layout.support_simple_spinner_dropdown_item, spTextServiceType);
+        spRequestDetail.setAdapter(adapterCarType);
 
 
         //End
@@ -200,15 +234,45 @@ public class RequestFragment extends Fragment implements
         btnAddService.setOnClickListener(this);
 
         cardView = (android.support.v7.widget.CardView) rootView.findViewById(R.id.cardView);
+        progressBar = (FrameLayout) rootView.findViewById(R.id.progress_bar);
+
+        mProgress = new ProgressDialog(getContext());
+        mProgress.setTitle("กำลังดำเนินการ");
+        mProgress.setMessage("โปรอรอ...");
+        mProgress.setCancelable(false);
+        mProgress.setIndeterminate(true);
+
 
     }
 
-    private void createTextData() {
-        text.add("รถเสีย");
-        text.add("รถยางแบน");
-        text.add("แบตเตอรี่หมด");
-        text.add("หม้อน้ำรั่ว");
-        text.add("น้ำมันรั่ว");
+    private void createServiceType() {
+        Call<ServiceTypeCollectionDao> call = HttpManager.getInstance().getService().getServiceType();
+        call.enqueue(new Callback<ServiceTypeCollectionDao>() {
+            @Override
+            public void onResponse(Call<ServiceTypeCollectionDao> call, Response<ServiceTypeCollectionDao> response) {
+
+                if (response.isSuccessful()) {
+                    ServiceTypeCollectionDao dao;
+                    dao = response.body();
+                    if (dao.isSuccess()) {
+                        int numRows = dao.getNumRows();
+                        for (int i = 0; i < numRows; i++) {
+                            spTextServiceType.add("" + dao.getServiceType().get(i).getServiceTypeId() + "." + dao.getServiceType().get(i).getServiceTypeName());
+                        }
+                    }
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServiceTypeCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+
+            }
+
+        });
+        spTextServiceType.add("กรุณาเลือกประเภทบริการ");
     }
 
     @Override
@@ -249,6 +313,7 @@ public class RequestFragment extends Fragment implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMaps = googleMap;
 
     }
 
@@ -288,6 +353,7 @@ public class RequestFragment extends Fragment implements
             // Do something when location provider not available
         }
     }
+
     public String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
@@ -297,7 +363,7 @@ public class RequestFragment extends Fragment implements
                 String aum = addresses.get(0).getLocality();
                 String pro = addresses.get(0).getAdminArea();
 
-                strAdd = aum+pro;
+                strAdd = aum + pro;
 
             } else {
                 Log.w("address", "No Address returned!");
@@ -328,17 +394,17 @@ public class RequestFragment extends Fragment implements
 
     @Override
     public void onLocationChanged(Location location) {
-        mMap.clear();
+        //mMap.clear();
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-        description = getCompleteAddressString(latitude,longitude);
+        description = getCompleteAddressString(latitude, longitude);
         edtLat.setText(latitude + "");
         edtLon.setText(longitude + "");
 
         LatLng latlng = new LatLng(latitude, longitude);
-        MarkerOptions markFrom = new MarkerOptions().position(new LatLng(latitude, longitude)).title("ตำแหน่งปัจจุบัน");
-        mMap.addMarker(markFrom);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((latlng), 12));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((latlng), 11));
+
+        getLocationService(20);
 
     }
 
@@ -355,14 +421,15 @@ public class RequestFragment extends Fragment implements
 
         }
         if (v == btnAddService) {
-            dialogService();
+            dialogService(distance);
         }
         if (v == btnSendRequest) {
             if (editTextRequestDetailCar.getText().toString().length() == 0) {
                 showToast("กรุณาระบุลักษณะรถของคุณ!");
-            } else if (edtUserIdService.getText().toString().length() == 0) {
-                showToast("กรุณาเลือกร้านให้บริการ!");
+            } else if (spRequestDetail.getSelectedItem().toString().substring(0, 1).equals("ก")) {
+                showToast("กรุณาเลือกประเภทบริการ!");
             } else {
+                mProgress.show();
                 AlertDialog.Builder builder =
                         new AlertDialog.Builder(getContext());
 
@@ -371,8 +438,109 @@ public class RequestFragment extends Fragment implements
                 builder.setPositiveButton("ใช่", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sendRequest();
-                        updateStatusService();
+                        String getlat = edtLat.getText().toString();
+                        String getlon = edtLon.getText().toString();
+                        String id = edtServiceId.getText().toString();
+                        String type = spRequestDetail.getSelectedItem().toString().substring(0, 1);
+                        final int serviceType = Integer.parseInt(type);
+                        if (id.equals("")) {
+                            Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAllNear(getlat, getlon, distance + "");
+                            call.enqueue(new Callback<ServiceCollectionDao>() {
+                                @Override
+                                public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
+                                    if (response.isSuccessful()) {
+                                        daoService = response.body();
+
+                                        if (daoService.isSuccess()) {
+                                            int c = 0;
+                                            for (int i = 0; i < CountServiceManager.getInstance().getDao().getService().size(); i++) {
+                                                if (serviceType == daoService.getService().get(i).getServiceType()) {
+                                                    sendRequest(daoService.getService().get(i).getUserServiceId());
+                                                    c = c + 1;
+                                                }
+
+                                            }
+                                            mProgress.dismiss();
+                                            if (c == 0) {
+                                                new AlertDialog.Builder(getContext())
+                                                        .setTitle("การร้องขอ")
+                                                        .setMessage("ไม่มีร้านให้บริการในประเภทที่คุณเลือก")
+                                                        .setPositiveButton("ปิด", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                                cardView.setVisibility(View.GONE);
+                                                                btnOpenRequest.setVisibility(View.VISIBLE);
+
+                                                            }
+                                                        })
+                                                        .show();
+                                            } else {
+                                                new AlertDialog.Builder(getContext())
+                                                        .setTitle("การร้องขอ")
+                                                        .setMessage("ร้องขอเรียบร้อยแล้ว")
+                                                        .setPositiveButton("ปิด", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.dismiss();
+                                                                cardView.setVisibility(View.GONE);
+                                                                btnOpenRequest.setVisibility(View.VISIBLE);
+
+                                                            }
+                                                        })
+                                                        .show();
+                                            }
+
+                                        } else {
+                                            mProgress.dismiss();
+                                            new AlertDialog.Builder(getContext())
+                                                    .setTitle("การร้องขอ")
+                                                    .setMessage("ไม่มีร้านให้บริการ")
+                                                    .setPositiveButton("ปิด", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                            cardView.setVisibility(View.GONE);
+                                                            btnOpenRequest.setVisibility(View.VISIBLE);
+
+                                                        }
+                                                    })
+                                                    .show();
+                                        }
+
+
+                                    } else {
+                                        Log.e("Error", response.errorBody().toString());
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ServiceCollectionDao> call, Throwable t) {
+                                    Log.e("errorConnection", t.toString());
+
+                                }
+                            });
+                        } else {
+                            int Id = Integer.parseInt(id);
+                            sendRequest(Id);
+                            mProgress.dismiss();
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("การร้องขอ")
+                                    .setMessage("ร้องขอเรียบร้อยแล้ว")
+                                    .setPositiveButton("ปิด", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            cardView.setVisibility(View.GONE);
+                                            btnOpenRequest.setVisibility(View.VISIBLE);
+
+                                        }
+                                    })
+                                    .show();
+                        }
+
+
+                        //updateStatusService();
                     }
                 });
 
@@ -400,8 +568,18 @@ public class RequestFragment extends Fragment implements
         }
         if (v == btnOpenRequest) {
             getUsersShow();
+            edtServiceId.setText("");
             cardView.setVisibility(View.VISIBLE);
             btnOpenRequest.setVisibility(View.GONE);
+        }
+        if (v == btnServiceSelect) {
+            serviceSelect.setVisibility(View.VISIBLE);
+            serviceAuto.setVisibility(View.GONE);
+        }
+        if (v == btnCancelSelect) {
+            edtServiceId.setText("");
+            serviceSelect.setVisibility(View.GONE);
+            serviceAuto.setVisibility(View.VISIBLE);
         }
     }
 
@@ -437,7 +615,6 @@ public class RequestFragment extends Fragment implements
             @Override
             public void onFailure(Call<UsersCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
             }
         });
     }
@@ -493,7 +670,6 @@ public class RequestFragment extends Fragment implements
             @Override
             public void onFailure(Call<RequestCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ/เรียกข้อมูลคำร้องขอ");
             }
         });
     }
@@ -501,7 +677,7 @@ public class RequestFragment extends Fragment implements
     private void updateStatusService() {
         String serviceId = edtServiceId.getText().toString();
         int serviceIdd = Integer.parseInt(serviceId);
-        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().updateservicestatus(serviceIdd, 1);
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().updateservicestatus(serviceIdd, 0);
         call.enqueue(new Callback<ServiceCollectionDao>() {
             @Override
             public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
@@ -516,30 +692,26 @@ public class RequestFragment extends Fragment implements
         });
     }
 
-    private void sendRequest() {
+    private void sendRequest(final int serviceId) {
         int idUser = dao.getUser().get(0).getUserId();
-
-        String request = spRequestDetail.getSelectedItem().toString();
+        String request = spRequestDetail.getSelectedItem().toString().substring(2);
         String requestDetail = "  " + editTextRequestDetail.getText().toString();
         String requestDetailCar = editTextRequestDetailCar.getText().toString();
         String requestLat = edtLat.getText().toString();
         String requestLon = edtLon.getText().toString();
-        String description = getCompleteAddressString(latitude,longitude);
+        String description = getCompleteAddressString(latitude, longitude);
 
-        String serviceId = edtServiceId.getText().toString();
-        final int serviceIdd = Integer.parseInt(serviceId);
 
-        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().insertRequest(request + requestDetail, requestDetailCar, requestLat, requestLon, 1, idUser, serviceIdd);
+        Call<RequestCollectionDao> call = HttpManager.getInstance().getService().insertRequest(request + requestDetail, requestDetailCar, requestLat, requestLon, 1, idUser, serviceId);
         call.enqueue(new Callback<RequestCollectionDao>() {
             @Override
             public void onResponse(Call<RequestCollectionDao> call, Response<RequestCollectionDao> response) {
 
                 if (response.isSuccessful()) {
                     daoRequest = response.body();
-                    String message = daoRequest.getMessage();
                     if (daoRequest.isSuccess()) {
-                        getRequestUser();
-                        sendNotification();
+                        Log.e("nitifi", serviceId + "");
+                        sendNotification(serviceId);
                     } else {
                         //showToast(message);
                     }
@@ -552,20 +724,16 @@ public class RequestFragment extends Fragment implements
             @Override
             public void onFailure(Call<RequestCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
             }
         });
     }
 
-    private void sendNotification() {
-        String serviceId = edtServiceId.getText().toString();
-        int serviceIdd = Integer.parseInt(serviceId);
-        String request = spRequestDetail.getSelectedItem().toString();
+    private void sendNotification(int serviceId) {
+        String request = spRequestDetail.getSelectedItem().toString().substring(2);
         String requestDetail = "  " + editTextRequestDetail.getText().toString();
         String requestDetailCar = editTextRequestDetailCar.getText().toString();
 
-
-        Call<UserSendNotification> call = HttpManager.getInstance().getService().notification(serviceIdd, request, requestDetail + requestDetailCar);
+        Call<UserSendNotification> call = HttpManager.getInstance().getService().notification(serviceId, "การร้องขอ", "(" + request + ")" + requestDetail + requestDetailCar);
         call.enqueue(new Callback<UserSendNotification>() {
             @Override
             public void onResponse(Call<UserSendNotification> call, Response<UserSendNotification> response) {
@@ -745,7 +913,7 @@ public class RequestFragment extends Fragment implements
         dialog.show();
     }
 
-    private void dialogService() {
+    private void dialogService(int distance) {
         dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.dialog_service);
 
@@ -759,8 +927,10 @@ public class RequestFragment extends Fragment implements
         listView.setAdapter(listAdapter);
         listView.setOnItemClickListener(listViewItemClickListener);
 
+        String getlat = edtLat.getText().toString();
+        String getlon = edtLon.getText().toString();
 
-        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAll(description);
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAllNear(getlat, getlon, distance + "");
         call.enqueue(new Callback<ServiceCollectionDao>() {
             @Override
             public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
@@ -860,7 +1030,6 @@ public class RequestFragment extends Fragment implements
             @Override
             public void onFailure(Call<CarTypeCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
 
             }
 
@@ -894,7 +1063,6 @@ public class RequestFragment extends Fragment implements
             @Override
             public void onFailure(Call<CarNameCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
 
             }
 
@@ -926,7 +1094,7 @@ public class RequestFragment extends Fragment implements
             @Override
             public void onFailure(Call<CarColorCollectionDao> call, Throwable t) {
                 Log.e("errorConnection", t.toString());
-                showToast("เชื่อมต่อไม่สำเร็จ");
+
 
             }
 
@@ -944,11 +1112,11 @@ public class RequestFragment extends Fragment implements
                     CommentCollectionDao dataComment = response.body();
 
                     if (dataComment.getComment() != null) {
-                        Log.e("id toat1", id + "");
+
                         listAdapterComment.setDataComment(dataComment);
                         listAdapterComment.notifyDataSetChanged();
                     } else {
-                        Log.e("id toat2", id + "");
+
                         tvNotData.setVisibility(View.VISIBLE);
                     }
 
@@ -963,4 +1131,79 @@ public class RequestFragment extends Fragment implements
             }
         });
     }
+
+    private void getLocationService(final int distance) {
+
+        String getlat = edtLat.getText().toString();
+        String getlon = edtLon.getText().toString();
+
+        Call<ServiceCollectionDao> call = HttpManager.getInstance().getService().getServiceAllNear(getlat, getlon, distance + "");
+        call.enqueue(new Callback<ServiceCollectionDao>() {
+            @Override
+            public void onResponse(Call<ServiceCollectionDao> call, Response<ServiceCollectionDao> response) {
+                if (response.isSuccessful()) {
+                    daoService = response.body();
+                    mMaps.clear();
+                    MarkerOptions markFrom = new MarkerOptions().position(new LatLng(latitude, longitude)).title("ตำแหน่งปัจจุบัน");
+                    markFrom.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_1));
+                    mMap.addMarker(markFrom);
+
+                    mMap.addCircle(new CircleOptions()
+                            .center(new LatLng(latitude, longitude))
+                            .radius(distance * 1000)
+                            .strokeColor(0x5500ff00)
+                            .fillColor(0x5500ff00));
+
+                    CountServiceManager.getInstance().setDao(daoService);
+                    for (int i = 0; i < CountServiceManager.getInstance().getDao().getService().size(); i++) {
+
+                        Double serviceLat = Double.parseDouble(daoService.getService().get(i).getServiceLat());
+                        Double serviceLon = Double.parseDouble(daoService.getService().get(i).getServiceLon());
+                        String serviceName = daoService.getService().get(i).getServiceName();
+                        String serviceTypeName = daoService.getService().get(i).getServiceTypeName();
+                        MarkerOptions markFrom2 = new MarkerOptions().position(new LatLng(serviceLat, serviceLon)).title(serviceName + "  (" + serviceTypeName + ")");
+                        markFrom2.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_2));
+                        mMaps.addMarker(markFrom2);
+
+
+                    }
+                    progressBar.setVisibility(View.GONE);
+
+                } else {
+                    Log.e("Error", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ServiceCollectionDao> call, Throwable t) {
+                Log.e("errorConnection", t.toString());
+
+            }
+        });
+    }
+
+    //SeekBar
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        String value = Integer.toString(progress);
+        tvSeekBar.setText(value + " กม.");
+        //showToast("รัศมีตอนนี้คือ : " + value);
+        //mMaps.clear();
+        distance = progress;
+        progressBar.setVisibility(View.VISIBLE);
+        getLocationService(progress);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+
+    }
+
+    // End Seek Bar
 }

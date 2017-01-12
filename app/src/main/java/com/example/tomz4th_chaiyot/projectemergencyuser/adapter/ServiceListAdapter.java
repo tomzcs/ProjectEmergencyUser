@@ -37,15 +37,19 @@ public class ServiceListAdapter extends BaseAdapter {
         ServiceListItem item;
         if (convertView != null)
             item = (ServiceListItem) convertView;
-        else
+        else {
             item = new ServiceListItem(parent.getContext());
+        }
 
         ServiceDao dao = (ServiceDao) getItem(position);
-        item.setTvName(dao.getServiceName());
+
+        item.setTvName(dao.getServiceName()+"  ("+dao.getServiceTypeName()+")");
         item.setTvDetail(dao.getServiceDetail());
         item.setTvAdd(dao.getServiceAdd());
+        item.setTvDistance(dao.getDistance() + " กิโลเมตร");
         item.setImgPhoto(dao.getUserImg());
         item.setImgPhotoService(dao.getServiceImg());
+
 
         return item;
     }
